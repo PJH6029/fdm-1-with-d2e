@@ -1,0 +1,8 @@
+.omx/
+MLXP.md
+__pycache__/
+*.py[cod]
+outputs/
+.venv/
+*.egg-info/
+.env
