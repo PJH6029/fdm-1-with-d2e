@@ -1,247 +1,163 @@
 # Video Encoder
 
+Canonical source: `../CANONICAL_SPEC.md`; survey context: `../../literature_survey/VIDEO_ENCODER.md`.
+
 ## Role
 
-Compress D2E video frames from all games into a shared visual token space suitable for IDM and FDM.
+Learn a compact D2E gameplay/screen-recording representation for IDM and FDM. The encoder must preserve control-relevant visual state across 2D games, 3D/FPS games, open-world/sandbox games, menus, HUDs, UI overlays, tiny text/icons, cursor/crosshair movement, rapid camera motion, and low-motion segments.
 
-The encoder should handle:
+Core assumption: generic pretrained video encoders are useful initializations, but they should not be assumed to contain enough computer/gameplay domain knowledge. D2E gameplay-domain adaptation is a central reproduction task, not a minor token-selection detail.
 
-- 3D scenes
-- 2D scenes
-- menus
-- UI overlays
-- text-heavy screens
-- cursor/crosshair movement
-- rapid camera motion
-- low-motion or idle segments
+## Input/output
 
-## Input
-
-```
-D2E video frames
-sampled at 20fps or grouped from 60fps into 50ms bins
+```text
+D2E 60fps gameplay/screen video aligned to 50ms bins
+  → compact video tokens/features per 50ms bin
+  → IDM/FDM
 ```
 
-## Output
+The output must be cacheable and reproducible from a dataset manifest, git SHA, encoder checkpoint/config, adaptation config, and feature-cache format.
 
-```
-compressed video tokens per 50ms bin
-```
+## Candidate and adaptation set
 
-## Video Encoder backbone
+### VE-0 — frozen pretrained encoder bakeoff
 
-Use pretrained V-JEPA 2 as the PoC video encoder backbone.
+Purpose: measure the domain gap before expensive adaptation.
 
-The main PoC should not train a custom video encoder from scratch.
-Instead, it should evaluate whether V-JEPA 2 can be adapted into a useful FDM-1-style compressed video representation for D2E.
+Candidates, subject to engineering availability:
 
-### VE-0: Frozen V-JEPA 2 + linear/shallow probes
+- V-JEPA 2 / 2.1 as the FDM-1-adjacent JEPA-style initialization;
+- VideoPrism as a strong general frozen video encoder challenger;
+- VideoMAE v2 or InternVideo2-style candidates if practical.
 
-Purpose:
+Run identical D2E action/screen probes and Tiny-IDM/Tiny-FDM transfer. VE-0 is diagnostic and should not be treated as sufficient unless it unexpectedly performs well on held-out games and long-context compression.
 
-- establish whether pretrained V-JEPA 2 features already contain useful information for D2E action prediction.
+### VE-1 — frozen encoder + trainable temporal resampler
 
-Training:
+Purpose: test whether learned temporal token selection/compression over frozen features is enough.
 
-- freeze V-JEPA 2
-- train only shallow probes for:
-    - mouse movement
-    - keyboard events
-    - mouse buttons
-    - next-action prediction
-
-Evaluation:
-
-- frozen feature action probe
-- per-game and per-category metrics
-
-Use for:
-- diagnosing whether V-JEPA 2 features preserve gameplay-relevant information
-
-### VE-1: Frozen V-JEPA 2 + trainable temporal compressor
-
-Recommended first main candidate.
-
-Architecture:
-
-```
-D2E frames
-  → frozen V-JEPA 2
-  → trainable temporal compressor / Perceiver resampler
-  → fixed number of video tokens per 50ms bin
+```text
+frames/window → frozen pretrained encoder → temporal resampler/Perceiver → fixed video tokens per 50ms bin
 ```
 
-Training:
+Use as the frozen reference for token budget and cache economics. If VE-1 fails on HUD/UI/cursor/crosshair or held-out-game action metrics, the remedy is encoder adaptation, not only a larger resampler.
 
-- freeze V-JEPA 2
-- train resampler/compressor
-- train IDM/FDM on compressed tokens
+### VE-2 — D2E gameplay adapter / LoRA / last-block adaptation
 
-Token budget:
+Main practical adaptation candidate.
 
-- 4 video tokens / 50ms bin default
-- ablate 8 and 16 tokens / bin
+Purpose: inject D2E gameplay/screen domain knowledge while preserving pretrained features and keeping compute feasible.
 
-Pros:
+Adapt:
 
-- stable
-- efficient
-- avoids destroying pretrained representation
-- suitable for H200 x4 first-pass experiments
+- LoRA/adapters;
+- last N blocks;
+- temporal resampler;
+- optional lightweight screen-state heads.
 
-Use for:
+Targets:
 
-- main IDM/FDM runs
-- most ablations
-- pseudo-label usefulness study
+- action-probe utility;
+- HUD/UI/cursor/crosshair sensitivity;
+- held-out-game generalization;
+- downstream Tiny-IDM/Tiny-FDM improvements.
 
-### VE-2: V-JEPA 2 last-block / adapter / LoRA finetuning
+### VE-3 — D2E self-supervised gameplay video adaptation
 
-Architecture:
+Main representation-learning candidate.
 
-```
-D2E frames
-  → V-JEPA 2 with LoRA/adapters or last-N-block finetuning
-  → temporal compressor / resampler
-  → compressed video tokens
-```
+Train on D2E video with masked latent/video prediction before downstream IDM/FDM training. Labels are used for probes and downstream validation, not as the primary self-supervised target.
 
-Training:
+Recommended objectives:
 
-- freeze lower V-JEPA 2 blocks
-- finetune only:
-    - LoRA/adapters
-    - last N blocks
-    - temporal compressor
+- masked latent prediction using a teacher/frozen target;
+- temporal span prediction for long-context state;
+- optional spatial masking biased toward UI/HUD/cursor/text regions if diagnostics justify it.
 
-Purpose:
+### VE-4 — screen/game auxiliary adaptation
 
-- adapt V-JEPA 2 to D2E-specific visual features:
-    - HUD
-    - crosshair
-    - cursor
-    - UI text
-    - menus
-    - fast camera motion
-    - small objects
+Use when diagnostics show specific screen-domain failures.
 
-Use for:
+Possible auxiliary targets/probes:
 
-- testing whether D2E domain adaptation improves IDM/FDM
-- comparing against VE-1
+- cursor/crosshair localization;
+- HUD/text/menu region sensitivity;
+- next-click or click-target location;
+- low-motion state-change detection;
+- active-window/game-state metadata where appropriate.
 
-### VE-3: V-JEPA 2 domain adaptation with masked video objective
+These auxiliaries are not the main final metric; they are tools to fix representation failures that hurt IDM/FDM.
 
-Architecture:
+### VE-5 — end-to-end finetuning with IDM/FDM
 
-```
-D2E video
-  → V-JEPA 2 backbone
-  → masked latent prediction / JEPA-style adaptation
-  → temporal compressor
-```
+Optional upper-bound only. Use after VE-2/VE-3 are stable because it is expensive, harder to attribute, and can overfit action labels.
 
-Training objective:
+## Evaluation and promotion
 
-```
-mask temporal spans and/or spatial regions
-predict teacher latent features of masked frames
-```
+Evaluate the video encoder as a first-class research stage.
 
-Recommended:
+### Eval VE-A — domain-gap probes
 
-- use action labels only for probes or downstream training, not as the primary video encoder objective.
-- primary objective should remain self-supervised video representation adaptation.
+Freeze each encoder candidate and train identical probes on cached features.
 
-Purpose:
+Probe targets:
 
-- test whether self-supervised D2E video adaptation improves downstream action modeling.
+- 50ms-bin mouse movement;
+- keyboard event presence/key family;
+- mouse button event presence;
+- cursor/crosshair or next-click position where feasible;
+- UI/HUD/text/menu-sensitive probes when labels or heuristics are available.
 
-Use for:
+Report micro-average, per-game macro-average, and held-out-game macro-average.
 
-- RQ5 scale trend
-- video encoder ablation
+### Eval VE-B — downstream transfer
 
-### VE-4: End-to-end finetuned V-JEPA 2 with IDM/FDM
+Train fixed-budget Tiny IDM/FDM heads with the same data, action tokenization, model budget, and schedule for every VE candidate.
 
-Optional, not default.
+Report:
 
-Architecture:
+- Tiny-IDM D2E primary metrics;
+- Tiny-FDM teacher-forced metrics;
+- logged free-running stability for the best VE candidates;
+- whether gains persist on held-out games.
 
-- V-JEPA 2 + temporal compressor + IDM/FDM are trained jointly.
+### Eval VE-C — long-context compression
 
-Purpose:
+Measure whether the representation supports long video context without losing action-relevant state.
 
-- test upper-bound downstream performance.
+Report:
 
-Risks:
+- tokens per 50ms bin;
+- cache size per video-hour;
+- maximum practical context length;
+- performance degradation from short to longer contexts;
+- state-retention failures in menus, inventory, navigation, and low-motion segments.
 
-- expensive
-- harder to attribute improvements
-- may overfit to D2E actions
-- may reduce interpretability of video encoder stage
+### Eval VE-D — adaptation safety
 
-Use only after VE-1 / VE-2 are stable.
+For VE-2/VE-3/VE-5, compare pre-adaptation and post-adaptation behavior.
 
-## Video Encoder training objective
+Reject or demote an adapted encoder if:
 
-For VE-1:
+- improvements appear only on train/in-distribution games;
+- held-out-game action metrics regress;
+- feature norms/token entropy suggest collapse;
+- downstream IDM/FDM becomes less stable;
+- cache/training cost makes 50%/100% scale runs infeasible.
 
-- train compressor through downstream IDM/FDM losses.
-- optionally add masked latent prediction loss.
+### Eval VE-E — operational efficiency
 
-For VE-2 / VE-3:
+Report:
 
-- use a combination of:
-    - masked latent prediction
-    - downstream IDM loss
-    - downstream FDM loss, if doing joint finetune
-    - optional reconstruction or contrastive regularization
+- feature extraction FPS or video-hours/GPU-hour;
+- cache size per video-hour;
+- GPU memory and batch size;
+- downstream training throughput;
+- inference latency.
 
-Default recommendation:
+## Promotion rule
 
-```
-L_VE =
-  L_masked_latent_prediction
-```
-
-for domain adaptation, followed by downstream IDM/FDM training.
-
-For joint finetuning:
-
-```
-L_total =
-  L_downstream
-  + λ_ve * L_masked_latent_prediction
-```
-
-## Video Encoder evaluation
-
-Primary:
-
-1. frozen V-JEPA 2 action probe
-2. V-JEPA 2 + compressor IDM downstream performance
-3. V-JEPA 2 + compressor FDM downstream performance
-4. VE candidate comparison:
-    - VE-0
-    - VE-1
-    - VE-2
-    - VE-3
-    - optional VE-4
-5. compression / throughput
-6. per-game and macro-game performance
-
-Baselines:
-
-- no-op / zero-mouse baseline
-- previous-action repeat baseline
-- action-history-only baseline
-- frozen image encoder + shallow probe, optional
-- raw-frame baseline, optional if compute allows
-
-Success criteria:
-
-- V-JEPA 2 features improve action prediction beyond action-only and no-op baselines.
-- VE-1 or VE-2 improves IDM/FDM downstream performance over VE-0.
-- gains appear across multiple game categories, not only FPS or one high-resource game.
-- higher token budget or adaptation shows measurable improvement, unless the task is bottlenecked by labels/action ambiguity.
+- Frozen encoders and VE-1 are references for domain-gap measurement and token-budget economics.
+- VE-2 or VE-3 should be attempted unless frozen features unexpectedly meet held-out/downstream requirements.
+- Promote an adapted VE only if it improves held-out/downstream action metrics or fixes a documented screen/game perception failure without breaking scale feasibility.
+- Promote at most 1–2 VE settings to Base IDM/FDM runs.
