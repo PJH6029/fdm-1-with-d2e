@@ -56,9 +56,6 @@ Evaluation:
 - per-game and per-category metrics
 
 Use for:
-
-- RQ1
-- RQ2 baseline
 - diagnosing whether V-JEPA 2 features preserve gameplay-relevant information
 
 ### VE-1: Frozen V-JEPA 2 + trainable temporal compressor
