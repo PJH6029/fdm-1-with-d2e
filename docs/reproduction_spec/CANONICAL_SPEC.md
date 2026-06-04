@@ -135,6 +135,10 @@ Target/reference:
 
 - **FDM-1 FDM Target:** the closed-source FDM-1 forward dynamics/action model is the ultimate reproduction target. There is no public checkpoint, so comparisons must be framed as target-gap evidence: public FDM-1 recipe/claim alignment, D2E offline action quality, logged free-running stability, harness behavior, and limitations caused by D2E's smaller data volume.
 
+Input alignment rule:
+
+- **No future visual evidence:** when predicting action bin `A_t = [t, t+50ms)`, FDM may condition only on visual tokens available at decision time `t` and previous actions `A_<t`. `VideoBin_t` is allowed only if it is defined from frames ending at or before `t`; otherwise use `VideoBin_<t` or re-index the visual bin to avoid target-interval leakage.
+
 Floor baselines and diagnostics:
 
 - **FDM-B0 No-op/zero-mouse floor**
@@ -142,12 +146,18 @@ Floor baselines and diagnostics:
 - **FDM-B2 Action-only transformer diagnostic**
 - **FDM-B3 Video-only transformer diagnostic**
 
+Prediction-unit candidates:
+
+- **FDM-SerializedAR:** predicts mouse/event slots inside the target 50ms bin autoregressively.
+- **FDM-MultiHead:** predicts mouse movement and event slots with independent heads from the same causal hidden state.
+
 Main trained candidates:
 
 - **FDM-GT:** video + past GT actions, trained on GT labels.
 - **FDM-Pseudo:** video + IDM pseudo-labels, trained on unfiltered pseudo-labels.
-- **FDM-FilteredPseudo:** trained on calibrated/confidence-filtered pseudo-labels.
-- **FDM-Mix:** trained on GT + pseudo-label mixture.
+- **FDM-FilteredPseudo:** trained on calibrated/confidence-filtered pseudo-labels, with per-token vs per-bin filtering/loss-weighting and low-confidence drop/weight/ignore policies treated as ablations.
+- **FDM-Mix:** trained on GT + pseudo-label mixture; sweep GT:pseudo ratios rather than fixing one default.
+- **FDM-GeneralistIDM-Pseudo:** optional comparison trained on D2E-Generalist-IDM-1B pseudo-labels only if inference/output compatibility is practical.
 - **FDM-GameID:** optional ablation, not the headline, because game ID can hide weak cross-game generalization.
 
 ## 8. Evaluation spec
@@ -239,7 +249,7 @@ Mandatory ablations:
 - VE: frozen encoder bakeoff and VE-1 frozen-resampler reference; VE-2/VE-3 gameplay-domain adaptation as main candidates unless frozen features unexpectedly satisfy held-out/downstream requirements.
 - IDM: D2E-Generalist-IDM-1B reference; IDM-CE and IDM-MLM as floor objective ablations; IDM-MDLM-16 as the main masked diffusion objective; causal vs non-causal; `τ=0ms` vs `τ=100ms`; future visual policy/width anchor-start vs post-target and `C_future=50ms` vs `150ms`; sampler steps `1/4/8/16` and `32` if compute allows; confidence filtering on/off. Add anchor-centered future windows, IDM-MD4/SGMD, action-family schedules, and corrective/remasking only when diagnostics justify them.
 - Tokenization: compound mouse token vs separate X/Y only if sparsity or NLL indicates a problem.
-- FDM: FDM-1 target-gap analysis; no-op/previous-action/action-only/video-only as floors/diagnostics; GT, pseudo, filtered pseudo, mix as trained candidates.
+- FDM: FDM-1 target-gap analysis; strict no-future-visual input alignment; no-op/previous-action/action-only/video-only as floors/diagnostics; `FDM-SerializedAR` vs `FDM-MultiHead` on Tiny before Base promotion; GT, pseudo, filtered pseudo, and mix as trained candidates; per-token vs per-bin pseudo filtering, low-confidence handling, and GT:pseudo mixture-ratio sweeps.
 - Context: short vs medium (`2s/10s` first; longer only after throughput is proven).
 - Scale: 10%, 50%, 100% mandatory; 1%/5% optional; 25% optional if curve shape is ambiguous.
 
