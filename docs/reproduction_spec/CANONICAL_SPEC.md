@@ -5,7 +5,7 @@ Scope: serious research reproduction, not a smoke path or demo-only PoC.
 
 ## 1. External anchors and closed-source gap
 
-Public FDM-1 describes a three-stage recipe: train an inverse dynamics model (IDM) on labeled screen recordings, use the IDM to pseudo-label much larger video-only corpora, then train a forward dynamics model (FDM) autoregressively on interleaved video/action data. Publicly disclosed action-token details include key press/release tokens, scroll tokens, mouse deltas split into X/Y and normalized before 49-way exponential binning, and an auxiliary next-click-position prediction target.
+Public FDM-1 describes a three-stage recipe: train an inverse dynamics model (IDM) on labeled screen recordings, use the IDM to pseudo-label much larger video-only corpora, then train a forward dynamics model (FDM) autoregressively on interleaved video/action data. Publicly disclosed IDM details indicate a non-causal masked-action model trained with a diffusion masked objective and decoded with a 16-step noise schedule. Publicly disclosed action-token details include key press/release tokens, scroll tokens, mouse deltas split into X/Y and normalized before 49-way exponential binning, and an auxiliary next-click-position prediction target.
 
 D2E provides synchronized 480p/60fps gameplay video, audio, keyboard events, mouse clicks/coordinates/raw HID deltas, and OWAMcap/MCAP logs. The D2E project also publicly released Generalist-IDM-1B weights and inference code. The D2E public evaluation protocol computes standardized action metrics over non-overlapping 50ms bins: mouse Pearson correlation X/Y, mouse scale ratio X/Y, mouse-button accuracy, and keyboard key accuracy.
 
@@ -17,7 +17,7 @@ Build a reproducible D2E training and evaluation pipeline that produces trained 
 
 A completed reproduction must show all of the following:
 
-1. **IDM quality:** a D2E-trained IDM matches or exceeds the public D2E Generalist-IDM-1B reference on the same D2E-standard 50ms action metrics, split policy, and prediction-to-MCAP evaluation path.
+1. **IDM quality:** a D2E-trained masked discrete diffusion IDM matches or exceeds the public D2E Generalist-IDM-1B reference on the same D2E-standard 50ms action metrics, split policy, and prediction-to-MCAP evaluation path.
 2. **Video encoder domain adaptation:** the video encoder learns a D2E gameplay/screen representation that preserves HUD/UI/cursor/crosshair/control-relevant state, generalizes to held-out games, and compresses long contexts efficiently. Frozen generic video encoders are diagnostic initializations, not assumed-sufficient solutions.
 3. **Pseudo-label usefulness:** FDMs trained from IDM pseudo-labels retain a substantial fraction of GT-label FDM performance, and filtering/calibration improves the pseudo-label quality/coverage tradeoff.
 4. **FDM quality:** the trained FDM aims to match the closed-source FDM-1 FDM as the ultimate reproduction target. Because FDM-1 weights and exact eval harness are not public, report a FDM-1 target-gap analysis using comparable public claims, logged D2E action metrics, free-running stability, and harness behavior.
@@ -27,7 +27,7 @@ A completed reproduction must show all of the following:
 ## 3. Non-goals and claim boundaries
 
 - The ultimate target is to match FDM-1's FDM behavior/performance envelope, but do not claim achieved exact parity with the closed-source model or Standard Intelligence's private 11M-hour corpus unless direct evidence supports it.
-- Naive priors like no-op, previous-action, action-only or video-only for IDM and FDM are only sanity/floor checks, not the target baselines.
+- Direct CE/MLM IDMs, causal IDMs, and no-op/action-frequency priors are sanity/floor ablations only; they are not the IDM reproduction target. Simple FDM baselines such as no-op, previous-action, action-only, and video-only are floor/diagnostic checks, not the FDM reproduction target.
 - Do not assume a generic pretrained video encoder has sufficient gameplay/screen-recording domain knowledge; frozen encoders must be audited as baselines/initializations.
 - Do not train a custom internet-scale video encoder from scratch unless later evidence makes it necessary; prioritize D2E gameplay-domain adaptation of strong pretrained initializations.
 - Do not modify the D2E source dataset. Treat `/mnt/ddn/extra-ddn-continuous-gui/` as read-only input.
@@ -115,13 +115,17 @@ VE-2 or VE-3 should be attempted unless VE-0/VE-1 unexpectedly match downstream 
 ### 7.2 IDM
 
 - **D2E-Generalist-IDM-1B Reference:** public D2E Generalist-IDM checkpoint and inference code. This is the primary IDM reference objective: evaluate it on the exact same local splits, timebase, and MCAP/evaluate.py-compatible path used for our IDM. Because this public model may have trained on overlapping D2E recordings, label it as a public target/reference rather than a clean held-out baseline unless the overlap is audited.
-- **IDM-Main Non-causal masked-action model:** attends to past and future visual context around target bins and predicts masked action slots. This is the main reproduction candidate.
-- **IDM-Calibrated:** temperature/confidence/entropy-filtered version of IDM-Main used for pseudo-labeling.
+- **IDM-MDLM-16 Main:** non-causal masked discrete diffusion IDM. Video/context tokens stay visible; target action slots are corrupted with absorbing `MASK_ACTION`; the denoiser is conditioned on a sampled timestep/noise level; training uses weighted masked-token CE under a diffusion schedule; inference starts from fully masked target slots and uses a 16-step confidence-guided sampler.
+- **IDM-MD4/SGMD:** continuous-time or state/action-dependent masked diffusion candidate, promoted only if IDM-MDLM-16 underperforms or calibration/no-op-collapse diagnostics justify it.
+- **IDM-ActionSchedule:** action-family masking/sampling/loss schedule ablation for no-op, mouse movement, keyboard/button/scroll, and invalid-state control.
+- **IDM-Corrective/Remask:** correction-oriented training or sampler remasking for high-confidence false positives, stuck keys/buttons, or visible wrong-token failures.
+- **IDM-CE and IDM-MLM:** one-shot cross-entropy classifier and random-mask denoising floors. Use for sanity checks, initialization, and ablation only; do not treat them as the reproduction target.
+- **IDM-Calibrated:** temperature/confidence/entropy-filtered version of the promoted IDM used for pseudo-labeling.
 - **IDM-Sanity Priors:** no-op/zero-mouse/action-frequency priors. These are implementation sanity checks only and must not be used as the success objective.
 - **IDM-Causal Ablation:** past-video-only ablation to quantify the value of non-causal inverse dynamics. It is an ablation, not the target baseline.
 - **IDM-Specialist:** per-game specialist only as an upper-bound diagnostic, not the main result.
 
-Default non-causal future offset is `τ = 100ms`; ablate `0ms` vs `100ms` first, then add `50/150/200ms` only if needed.
+Default non-causal future offset is `τ = 100ms`; ablate `0ms` vs `100ms` first, then add `50/150/200ms` only if needed. `τ` is the future visual evidence offset/anchor, not the full context length. Future visual width is `C_future`; each IDM run must record the actual past/future frame span, token count, temporal-resampler settings, and future-window policy. Ablate anchor-start `[t+τ, t+τ+C_future)` vs post-target `[t+50ms, t+50ms+C_future)` first with `C_future=50ms` vs `150ms`; add anchor-centered windows only if the first sweep is ambiguous.
 
 ### 7.3 FDM
 
@@ -164,14 +168,20 @@ Promote an adapted VE only if it improves held-out or downstream action metrics,
 
 ### 8.2 IDM primary metrics
 
-Use the D2E 50ms-bin metrics as headline:
+Use the D2E 50ms-bin metrics as headline and compare the promoted masked diffusion IDM to D2E-Generalist-IDM-1B on the same split/evaluator path:
 
 1. mouse Pearson correlation X/Y;
 2. mouse scale ratio X/Y;
 3. mouse-button accuracy;
 4. keyboard key accuracy.
 
-Report micro-average, per-game macro-average, and held-out-game macro-average. Also log masked-action NLL and calibration/ECE for model selection and pseudo-label filtering, but do not make them the headline unless explicitly studying calibration.
+Report micro-average, per-game macro-average, and held-out-game macro-average. Also log diffusion and pseudo-label diagnostics for model selection and failure analysis, but do not make them headline claims unless explicitly studying calibration:
+
+- masked-action NLL by noise level/timestep;
+- per-action-family NLL, accuracy, precision/recall/F1;
+- calibration/ECE by diffusion step and final token;
+- sampler step quality/throughput curve for `1/4/8/16` and `32` if compute allows;
+- high-confidence false positives, no-op/event-rate distribution, and impossible key/button state rate.
 
 ### 8.3 FDM primary metrics
 
@@ -207,7 +217,7 @@ For harness stability:
 A result counts as a meaningful win only when:
 
 - VE candidates are judged by gameplay/screen representation quality, held-out-game generalization, long-context compression, downstream action-model utility, and efficiency;
-- IDM is compared against the D2E-Generalist-IDM-1B public reference;
+- IDM is a masked diffusion model by default and is compared against the D2E-Generalist-IDM-1B public reference; CE/MLM/prior variants are floors or ablations only;
 - FDM is evaluated against the FDM-1 target-gap rubric, with simple FDM baselines treated only as floor checks;
 - the model improves reproducible primary aggregate metrics without hiding per-game macro regressions;
 - bootstrap confidence intervals or repeated-seed intervals exclude zero improvement when feasible;
@@ -227,7 +237,7 @@ Do not run a full factorial grid. Use a staged promotion protocol:
 Mandatory ablations:
 
 - VE: frozen encoder bakeoff and VE-1 frozen-resampler reference; VE-2/VE-3 gameplay-domain adaptation as main candidates unless frozen features unexpectedly satisfy held-out/downstream requirements.
-- IDM: our IDM vs D2E-Generalist-IDM-1B; causal vs non-causal as an internal ablation; `τ=0ms` vs `τ=100ms`; confidence filtering on/off.
+- IDM: D2E-Generalist-IDM-1B reference; IDM-CE and IDM-MLM as floor objective ablations; IDM-MDLM-16 as the main masked diffusion objective; causal vs non-causal; `τ=0ms` vs `τ=100ms`; future visual policy/width anchor-start vs post-target and `C_future=50ms` vs `150ms`; sampler steps `1/4/8/16` and `32` if compute allows; confidence filtering on/off. Add anchor-centered future windows, IDM-MD4/SGMD, action-family schedules, and corrective/remasking only when diagnostics justify them.
 - Tokenization: compound mouse token vs separate X/Y only if sparsity or NLL indicates a problem.
 - FDM: FDM-1 target-gap analysis; no-op/previous-action/action-only/video-only as floors/diagnostics; GT, pseudo, filtered pseudo, mix as trained candidates.
 - Context: short vs medium (`2s/10s` first; longer only after throughput is proven).
@@ -253,9 +263,10 @@ Mandatory ablations:
 ### Gate 2 — IDM useful labeler
 
 - D2E-Generalist-IDM-1B is evaluated as the primary public reference on the same local splits and evaluator path.
-- IDM-Main matches or exceeds D2E-Generalist-IDM-1B on the D2E primary metrics; if it does not, the gap is quantified and treated as a reproduction failure/limitation rather than hidden behind naive baselines.
+- IDM-MDLM-16 or a promoted masked diffusion variant matches or exceeds D2E-Generalist-IDM-1B on the D2E primary metrics; if it does not, the gap is quantified and treated as a reproduction failure/limitation rather than hidden behind direct CE/MLM, causal, or prior baselines.
+- 16-step inference is the default reported diffusion setting; lower-step samplers are speed/quality ablations.
 - Calibration/confidence correlates with correctness.
-- Pseudo-label distribution does not collapse to no-op or impossible key states.
+- Pseudo-label distribution does not collapse to no-op, stuck keys/buttons, or impossible key/button states.
 
 ### Gate 3 — Pseudo-label dataset
 
