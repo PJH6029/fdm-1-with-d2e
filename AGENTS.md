@@ -81,8 +81,17 @@ Structure rules:
 - Commit JSON schemas for manifests, metrics, run records, pseudo labels, action vocab, and checkpoint metadata under `schemas/`.
 - Split tests into `tests/unit/`, `tests/integration/`, and `tests/smoke/` as coverage grows.
 - Treat `outputs/`, `runs/`, `checkpoints/`, and `feature_cache/` as generated artifact directories; do not commit their contents unless a tiny fixture is explicitly required for tests.
-- `../fdm-d2e-reproduction` is stale old attempt. Do not use the old repo work. Its old objective/metrics/spec are not authoritative for this repo; Avoid copying the old repo's run-specific script/config sprawl. Generalize useful patterns into package modules, configs, and notes.
+- `../fdm-d2e-reproduction` is a stale old attempt. Do not use the old repo work. Its old objective/metrics/spec are not authoritative for this repo; avoid copying the old repo's run-specific script/config sprawl. Generalize useful patterns into package modules, configs, and notes.
 
+## Branching, parallel work, and repo management
+
+- Do not force all work onto one long-lived branch. Create task branches or git worktrees when that keeps work isolated and reviewable.
+- Parallelize independent implementation or investigation lanes with multiple worktrees when it improves throughput and reduces merge risk.
+- OMX workflows such as `ralph`, `team`, `autopilot`, and related skills may be used for implementation, verification, and coordinated multi-lane work when appropriate.
+- Prefer periodic, focused commits over one large end-of-project commit. Each commit should be reviewable, reversible, and tied to a coherent change.
+- Merge task branches/worktrees back through normal git workflows after verification. Resolve conflicts deliberately and rerun the relevant checks.
+- GitHub CLI is available and authenticated in the local environment; use it when it helps with branch/PR/repo management, issue lookup, or CI inspection.
+- Keep generated artifacts out of git even when they are produced from parallel worktrees; record them in notes/run records instead.
 
 ## Operational rules for this repo
 
