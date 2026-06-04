@@ -20,6 +20,70 @@ Do not use `AGENTS.md`, `CANONICAL_SPEC.md`, `OPERATIONAL_RULES.md`, or componen
 
 At the end of every substantive task, review `ROADMAP.md` and `DECISIONS.md`. If the work completes checklist items, changes status, or resolves an open choice, update the relevant checkboxes/decision slots.
 
+## Repository structure
+
+Current reproduction intent comes from `docs/reproduction_spec/`.
+
+Preferred structure for this repo:
+
+```text
+fdm-1-with-d2e/
+  docs/
+    literature_survey/
+    reproduction_spec/
+
+  src/
+    fdm_1_with_d2e/
+      data/             # D2E/MCAP reading, manifests, splits, 50ms binning
+      tokenization/     # action vocab, mouse bins, de-tokenization
+      video/            # encoders, feature cache, resamplers, probes, adaptation
+      models/           # VE/IDM/FDM modules, diffusion components, heads
+      training/         # train loops, losses, distributed/checkpoint utilities
+      pseudo_labeling/  # IDM inference, confidence filtering, pseudo-label datasets
+      evaluation/       # D2E metrics, aggregation, free-running, target-gap, scaling
+      harness/          # replay-control/desktop harness adapters and safety
+      cluster/          # MLXP/run records/W&B utilities
+      reporting/        # tables, plots, report assets, failure analysis
+
+  configs/
+    data/
+    tokenization/
+    video_encoder/
+    idm/
+    fdm/
+    pseudo_labeling/
+    evaluation/
+    harness/
+    cluster/
+    experiments/
+
+  schemas/
+  scripts/
+  tests/
+  docker/
+  notes/
+    runs/
+    experiments/
+    investigations/
+    failures/
+
+  outputs/        # generated, ignored
+  runs/           # generated, ignored
+  checkpoints/    # generated, ignored
+  feature_cache/  # generated, ignored
+```
+
+Structure rules:
+
+- Put reusable implementation code in `src/fdm_1_with_d2e/`.
+- Keep `scripts/` as thin CLI wrappers over package code; avoid large one-off scripts.
+- Commit reproducible configs under `configs/`; put run-specific experiment configs under `configs/experiments/<phase-or-date>/` when needed.
+- Commit JSON schemas for manifests, metrics, run records, pseudo labels, action vocab, and checkpoint metadata under `schemas/`.
+- Split tests into `tests/unit/`, `tests/integration/`, and `tests/smoke/` as coverage grows.
+- Treat `outputs/`, `runs/`, `checkpoints/`, and `feature_cache/` as generated artifact directories; do not commit their contents unless a tiny fixture is explicitly required for tests.
+- `../fdm-d2e-reproduction` is stale old attempt. Do not use the old repo work. Its old objective/metrics/spec are not authoritative for this repo; Avoid copying the old repo's run-specific script/config sprawl. Generalize useful patterns into package modules, configs, and notes.
+
+
 ## Operational rules for this repo
 
 - Edit code/docs locally in this repository.
