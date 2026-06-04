@@ -1,5 +1,9 @@
-# FDM-1 Spec
+# Literature Survey: FDM-1 Public Recipe
 link: https://si.inc/posts/fdm1/
+
+> Spec boundary: this file records public claims and plausible missing details. It is not the canonical local reproduction spec. Use `docs/reproduction_spec/CANONICAL_SPEC.md` for required metrics, baselines, and gates.
+> Reproduction target note: the FDM component is closed source; local FDM comparisons should therefore report a FDM-1 target-gap analysis rather than treating simple baselines as the final objective.
+
 
 # Data
 * For IDM pretraining:

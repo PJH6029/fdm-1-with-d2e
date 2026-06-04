@@ -4,6 +4,15 @@ Paper link: https://worv-ai.github.io/d2e/
 
 Dataset link: https://huggingface.co/datasets/open-world-agents/D2E-480p
 
+## Reproduction anchors
+
+- Public D2E-480p release: 267 hours, 29 PC games, 480p 60fps.
+- Includes synchronized video/audio plus keyboard/mouse/window events in OWAMcap/MCAP.
+- Official D2E-style IDM evaluation uses non-overlapping 50ms bins with mouse Pearson X/Y, mouse scale ratio X/Y, mouse-button accuracy, and keyboard key accuracy.
+- Public reference model: `open-world-agents/Generalist-IDM-1B`; use it as the IDM reference objective. Naive priors are sanity checks only.
+- Canonical reproduction spec should use those metrics as the primary offline action metrics and keep extra metrics diagnostic.
+
+
 ## Video + Audio
 
 - H.264 encoding
