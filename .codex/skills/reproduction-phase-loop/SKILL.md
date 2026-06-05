@@ -5,10 +5,11 @@ description: 'Use for each docs/reproduction_spec/ROADMAP.md phase in this FDM-1
 
 # Reproduction Phase Loop
 
-Drive one `ROADMAP.md` phase from research uncertainty to phase-exit evidence. This is the repo-local lifecycle supervisor over `$gpt-pro-query`, `$phase-plan`, `$ralplan`, `$ultragoal`, native `research-executor`, and `$team`; it does not replace those engines.
+Drive one `ROADMAP.md` phase from research uncertainty to phase-exit evidence. This repo-local skill is the lifecycle supervisor over `$gpt-pro-query`, `$phase-plan`, optional `$ralplan`, `$ultragoal`, native `research-executor`, and `$team`; it does not replace those engines.
 
-## Core structure
+## One-screen contract
 
+Core structure:
 ```text
 $reproduction-phase-loop
   ├─ inspect local spec/evidence
@@ -25,6 +26,20 @@ $reproduction-phase-loop
   └─ execution lane
        ├─ native research-executor subagent
        └─ $team
+```
+
+Canonical path:
+
+```text
+inspect spec/evidence
+-> gated $gpt-pro-query
+-> $phase-plan (research-architect -> research-critic)
+-> optional $ralplan --deliberate on ESCALATE_TO_RALPLAN or material risk
+-> mandatory $ultragoal phase ledger
+-> execution lane: native research-executor subagent | $team
+-> evidence verification + Ultragoal checkpointing
+-> terminal stories + installed Ultragoal final quality gate
+-> evidence-backed ROADMAP.md / DECISIONS.md updates
 ```
 
 ## Supervisor / executor boundary
@@ -48,7 +63,45 @@ Execution is delegated by story shape:
 
 Direct implementation by the phase supervisor is reserved for trivial edits to lifecycle artifacts or emergency recovery where delegation would add risk. Even then, preserve the same evidence-packet and checkpoint discipline.
 
-## Non-negotiable state rules
+Phase success requires implementation/experiment evidence, phase-exit GPT-Pro review, completed terminal stories, and the installed Ultragoal final quality gate. A plan, phase-plan approval, or ralplan artifact is never phase success by itself.
+
+## Canonical workflow
+
+Run this loop for the selected phase until evidence-backed phase success:
+
+```text
+phase start
+while phase is not evidence-complete:
+  inspect local spec / current evidence
+  identify latest literature / method gaps and stale assumptions
+  run or reuse required/justified $gpt-pro-query
+  verify, summarize, and challenge GPT-Pro output
+  update docs/literature_survey/ only with curated primary-source-backed survey text
+
+  run $phase-plan to draft/review notes/plans/phase-* directional plan
+  if verdict is REVISE: revise the phase plan and re-review
+  if verdict is ESCALATE_TO_RALPLAN: run $ralplan --deliberate
+
+  create or update mandatory $ultragoal phase ledger from the approved phase plan or ralplan handoff
+  verify goals.json contains core stories plus required preflight/terminal stories
+
+  delegate the current executable story to native research-executor or $team with an execution packet
+  verify the returned evidence packet
+  if evidence is incomplete, weak, or unverifiable:
+    do not checkpoint complete
+    revise the execution packet and redispatch, or steer/split the story if the blocker changes scope
+  else:
+    checkpoint Ultragoal from concrete evidence
+end while
+
+complete terminal stories
+satisfy the installed Ultragoal final quality gate
+update ROADMAP.md and DECISIONS.md only from final evidence
+```
+
+## Non-negotiable invariants
+
+### State and notes
 
 - Do not mark `docs/reproduction_spec/ROADMAP.md` checkboxes as completed before concrete implementation, run, or verification evidence exists.
 - Do not update `docs/reproduction_spec/DECISIONS.md` before phase evidence is sufficient for a finalized decision.
@@ -57,7 +110,7 @@ Direct implementation by the phase supervisor is reserved for trivial edits to l
 - Store GPT-Pro artifacts under `notes/investigations/gpt_pro/<phase>/<date-topic>/` using `$gpt-pro-query`: thread metadata/anchor/synthesis plus per-turn prompt/response/integration files.
 - Store curated, primary-source-checked survey updates under `docs/literature_survey/`; never paste GPT-Pro responses directly as survey text.
 
-## Non-negotiable cluster rules
+### Cluster and data operations
 
 Before any MLXP, GPU, Docker, W&B, or D2E-data-dependent run, the supervisor must require an operational preflight story or evidence packet that confirms:
 
@@ -71,31 +124,7 @@ Before any MLXP, GPU, Docker, W&B, or D2E-data-dependent run, the supervisor mus
 - non-trivial training/evaluation logs use W&B entity `pjh6029-seoul-national-university` and project `fdm-1-with-d2e`;
 - idle GPU pods are cancelled, and reservations use the smallest efficient GPU count.
 
-## Phase loop
-
-Run this loop for the selected phase until success:
-
-```text
-phase start
-while not success:
-  inspect local spec / current evidence
-  identify latest literature / method gaps
-  run required or justified $gpt-pro-query
-  verify, summarize, and challenge GPT-Pro output
-  update docs/literature_survey/ only with curated primary-source-backed survey text
-  run $phase-plan to draft/review notes/plans/phase-* directional plan
-  if $phase-plan returns ESCALATE_TO_RALPLAN: run $ralplan --deliberate
-  create or update mandatory $ultragoal phase ledger from the approved phase plan or ralplan handoff
-  ensure mandatory implementation/evaluation/preflight/terminal stories exist in Ultragoal
-  delegate the current executable story to native research-executor or $team
-  verify the returned evidence packet
-  checkpoint Ultragoal from concrete evidence
-end while
-```
-
-Final phase success requires the Ultragoal terminal stories below to complete before the supervisor records final evidence-backed decisions.
-
-## Required GPT-Pro gates
+## Gate 1: GPT-Pro review
 
 Invoke `$gpt-pro-query` at these gates unless a fresh, directly relevant artifact already exists and remains valid:
 
@@ -106,9 +135,9 @@ Invoke `$gpt-pro-query` at these gates unless a fresh, directly relevant artifac
 - After a failed branch: what to abandon, modify, or test next.
 - Before phase exit: whether evidence is sufficient to move to the next phase.
 
-GPT-Pro roles include implementation critique, research/experiment critique, result review, phase pre-literature survey, and theoretical plausibility review.
+GPT-Pro roles include implementation critique, research/experiment critique, result review, phase pre-literature survey, and theoretical plausibility review. Do not let GPT-Pro decide alone; verify claims against primary sources and local evidence before using them.
 
-## Phase plan vs ralplan
+## Gate 2: Phase plan and optional ralplan
 
 Use `$phase-plan` for the phase-level research brief and quality control.
 
@@ -127,12 +156,10 @@ Use `$phase-plan` for the phase-level research brief and quality control.
 - PRD/test-spec/ADR;
 - concrete acceptance criteria;
 - Architect -> Critic approval;
-- execution-ready scope for `$ultragoal` or `$team`;
+- execution-ready scope for `$ultragoal`, with `$team` candidates identified only as later execution lanes;
 - durable `.omx/plans/` planning gate.
 
 If `$phase-plan` escalates to `$ralplan`, keep the `notes/plans/phase-*` file as a thin index: why consensus planning is needed, what GPT-Pro/literature evidence to feed into it, and where the resulting `.omx/plans/` artifact lives. Do not duplicate PRD/test-spec detail in `notes/plans/`.
-
-## Mandatory phase-plan quality gate
 
 Before creating Ultragoal, `$phase-plan` must review the phase plan with sequential native subagents:
 
@@ -160,7 +187,7 @@ Verdicts:
 - `REVISE`: revise and re-review the phase plan.
 - `ESCALATE_TO_RALPLAN`: run `$ralplan --deliberate` before Ultragoal.
 
-## Mandatory Ultragoal phase ledger
+## Gate 3: Mandatory Ultragoal phase ledger
 
 Every ROADMAP phase must create or reuse an `$ultragoal` ledger. Do not run a plain ad-hoc execution path that bypasses Ultragoal.
 
@@ -172,17 +199,17 @@ omx ultragoal create-goals --brief-file notes/plans/phase-<n>-<name>/YYYYMMDD-<t
 
 If ralplan was used, the Ultragoal brief must cite the `.omx/plans/` PRD/test-spec/ADR and the phase-plan index. Ultragoal remains leader-owned; `$team` is an execution lane for Ultragoal stories, not a replacement for the ledger.
 
+Create the ledger in this order:
+
+1. First derive core phase stories from the approved phase plan / ralplan:
+   - implementation stories;
+   - experiment / ablation stories;
+   - evaluation stories;
+   - cluster/run stories;
+   - artifact/reporting stories.
+2. Then append the mandatory terminal stories.
+
 The terminal stories are append-only closure stories. They must not replace the core implementation, experiment, ablation, evaluation, or reporting stories derived from the approved phase plan or ralplan handoff.
-
-When creating Ultragoal, first derive the core phase stories from the approved phase plan / ralplan:
-
-- implementation stories;
-- experiment / ablation stories;
-- evaluation stories;
-- cluster/run stories;
-- artifact/reporting stories.
-
-Then append the mandatory terminal stories.
 
 Before accepting Ultragoal creation, inspect `.omx/ultragoal/goals.json` and verify it contains:
 
@@ -202,9 +229,7 @@ The ledger must include these story classes when applicable:
 4. cluster/run and artifact/reporting stories;
 5. mandatory terminal stories.
 
-## Mandatory terminal stories
-
-Before phase exit, the Ultragoal ledger must include and complete these terminal stories:
+Mandatory terminal stories before phase exit:
 
 1. **Run phase-exit GPT-Pro review** — submit current phase evidence as `result-phase-exit-review`, save prompt/response/integration, and produce a next-phase readiness verdict.
 2. **Integrate phase-exit review** — verify/accept/reject recommendations against primary sources and local evidence; update `synthesis.md` and any curated literature notes if needed.
@@ -236,7 +261,7 @@ Record story checkpoints with `omx ultragoal checkpoint --goal-id <id> --status 
 
 Ultragoal final completion must also satisfy the installed Ultragoal final quality gate, including cleanup/review/verification and `--quality-gate-json` when required.
 
-## Executor lane selection
+## Gate 4: Execution lane and evidence packet
 
 - Use a native `research-executor` subagent for small or bounded Ultragoal stories. The assignment must include the execution packet below.
 - Use `$team` from an Ultragoal story when independent lanes can run in parallel, e.g. implementation, tests/evaluation, cluster operations, and literature verification. The supervisor must launch, monitor, and shut down Team according to the `$team` lifecycle and checkpoint Ultragoal only from terminal Team evidence.
@@ -257,21 +282,9 @@ Execution packet contract:
 - Expected evidence packet: required verification and artifact shape, e.g. `changed files, pytest command/output, generated manifest fixture path, known risks, recommended Ultragoal checkpoint`.
 ```
 
-**If an execution lane returns incomplete, weak, or unverifiable evidence, do not checkpoint the story as complete.** Revise the execution packet and redispatch the same story, or steer/split the story if the blocker changes scope.
+If an execution lane returns incomplete, weak, or unverifiable evidence, do not checkpoint the story as complete. Revise the execution packet and redispatch the same story, or steer/split the story if the blocker changes scope.
 
-Default path:
-
-```text
-$reproduction-phase-loop
-  -> $gpt-pro-query
-  -> $phase-plan
-  -> optional $ralplan --deliberate only on ESCALATE_TO_RALPLAN or material risk
-  -> mandatory $ultragoal
-  -> native research-executor subagent | $team
-  -> terminal stories: phase-exit review, integration, ROADMAP/DECISIONS, notes/run records
-```
-
-## Execution evidence expectations
+## Progress evidence and closure
 
 Before claiming phase progress, gather concrete evidence appropriate to the phase:
 
