@@ -1,0 +1,14 @@
+.git
+.env
+.venv
+.omx
+outputs
+runs
+checkpoints
+feature_cache
+.pytest_cache
+__pycache__
+*.pyc
+.playwright-cli
+.playwright
+output/playwright
