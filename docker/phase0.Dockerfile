@@ -21,6 +21,7 @@ COPY scripts ./scripts
 COPY configs ./configs
 COPY schemas ./schemas
 COPY tests ./tests
+COPY notes ./notes
 
 RUN uv sync --locked --group dev \
     && uv run --locked pytest tests/smoke tests/unit/test_bootstrap_configs.py
