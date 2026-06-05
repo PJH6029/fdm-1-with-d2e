@@ -1,6 +1,6 @@
 # Canonical Reproduction Spec: FDM-1 with D2E
 
-Status: canonical planning spec as of 2026-06-04.
+Status: canonical planning spec as of 2026-06-05.
 Scope: serious research reproduction, not a smoke path or demo-only PoC.
 
 ## 1. External anchors and closed-source gap
@@ -97,6 +97,10 @@ D2E labeled/unlabeled recordings
   → offline metrics + logged free-run metrics + harness stability
   → report + checkpoints + reproducible configs
 ```
+
+Before expensive component ablations, build a thin end-to-end integration spine after the data/evaluator foundation is in place. The spine should run a tiny/fixture path through D2E reading, tokenization, a minimal frozen/stub VE feature path, Tiny IDM train/infer, pseudo-label materialization, Tiny FDM train/infer, prediction-to-event conversion, and evaluator/reporting outputs. This is an engineering compatibility gate, not a model-quality gate: it may use tiny models or stub/frozen components, but it must prove schema compatibility, artifact paths, no-future-visual FDM alignment, evaluator invocation, run-record completeness, and reproducible `uv run ...` commands before later VE/IDM/FDM ablations scale up.
+
+The spine must be contract-driven rather than a monolithic shortcut. Stage-specific logic belongs in reusable package modules, committed configs, schemas, and artifact formats so later phase implementations can replace stub/tiny components behind the same interfaces. Phase 0.5 stub, tiny, or naive implementations are compatibility fixtures only; they do not complete or promote the later VE, IDM, pseudo-labeling, or FDM research objectives unless those later phase gates separately audit and justify them.
 
 ## 7. Model families
 
@@ -261,6 +265,18 @@ Mandatory ablations:
 - 50ms action binning reconstructs plausible keyboard/mouse overlays.
 - Official-style metrics run from predictions and GT MCAP/logs.
 - Split and scale manifests are committed.
+
+### Gate 0.5 — Thin end-to-end integration spine
+
+- A single config/CLI path runs the tiny spine from D2E reader/tokenization through VE features, Tiny IDM train/infer, pseudo-label materialization, Tiny FDM train/infer, prediction conversion, and evaluator/reporting outputs.
+- The E2E CLI is a thin orchestrator over reusable component modules/configs rather than an inline monolithic script.
+- Explicit component contracts exist for tokenized data, VE cache, IDM predictions, pseudo labels, FDM predictions, evaluator inputs, and evaluator outputs.
+- Local fixture/unit/integration tests validate schema compatibility across tokenizer, VE cache, IDM output, pseudo-label dataset, FDM input/output, and evaluator input.
+- Contract tests show stub/tiny components can be replaced by later serious implementations without changing downstream artifact consumers.
+- If real D2E data is needed for interface validation, a tiny MLXP run is recorded with git SHA, config, `uv run ...` command, artifact paths, and environment details.
+- Generated outputs, caches, pseudo labels, checkpoints, reports, and temp files are written outside the source dataset tree.
+- FDM visual-bin indexing passes a no-future-visual-leakage guard.
+- Gate 0.5 results are compatibility/test evidence only; stub/tiny implementations must not be treated as completing or promoting later VE/IDM/pseudo-label/FDM phase objectives.
 
 ### Gate 1 — Gameplay-domain video representation
 

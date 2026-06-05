@@ -108,6 +108,7 @@ Rules:
 | Stage | Required comparisons | Required metrics/protocols | Required aggregation |
 | --- | --- | --- | --- |
 | Data/evaluator sanity | GT round-trip and trivial floors | timestamp alignment, action distribution, event overflow, prediction-to-event round-trip | per recording and per game |
+| E2E integration spine | No performance comparison; tiny/fixture path from tokenizer -> VE features -> Tiny IDM -> pseudo-labels -> Tiny FDM -> evaluator | test-based compatibility: CLI/config reproducibility, schema validation, artifact round-trip, official evaluator invocation where applicable, FDM no-future-visual leakage guard, dataset write-protection, run-record completeness; no model-quality claim | pass/fail test evidence plus artifact and run-record pointers |
 | Video encoder | frozen reference vs promoted adapted candidate(s) | action probes, screen/game probes, Tiny-IDM/Tiny-FDM transfer, long-context compression, efficiency, adaptation safety | micro, per-game macro, held-out-game macro |
 | IDM | D2E-Generalist-IDM-1B reference vs promoted masked diffusion IDM; floors as diagnostics | D2E primary metrics, masked-diffusion diagnostics, calibration, sampler curve, future-window diagnostics | micro, per-game macro, held-out-game macro |
 | Pseudo-labels | unfiltered vs filtered pseudo labels; optional Generalist-IDM pseudo labels if compatible | confidence/coverage, no-op/event drift, impossible state rate, downstream FDM usefulness | coverage curves plus held-out labeled validation |

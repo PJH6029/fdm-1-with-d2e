@@ -59,6 +59,46 @@ Goal: build the deterministic D2E/action/evaluation foundation used by every lat
 - [ ] Evaluator revision:
 - [ ] Phase 0 report section:
 
+## Phase 0.5 — Thin end-to-end integration spine
+
+Goal: build an engineering integration spine that proves artifact compatibility from D2E data through tokenization, VE features, IDM, pseudo-labeling, FDM, and evaluation before expensive component ablations. This is a test-based compatibility gate, not a model-quality or research-promotion gate.
+
+The spine must be contract-driven, not a monolithic shortcut. The E2E CLI may orchestrate stages, but reusable component logic belongs behind the same package modules, configs, schemas, and artifact formats that later phase implementations will replace or extend.
+
+### Implementation
+
+- [ ] A unified config/CLI path runs the tiny end-to-end sequence with `uv run ...`.
+- [ ] A tiny/fixture manifest drives D2E reader + 50ms tokenization through committed configs.
+- [ ] Component contracts are explicit for tokenized data, VE feature cache, IDM predictions, pseudo-label datasets, FDM predictions, evaluator inputs, and evaluator outputs.
+- [ ] A minimal frozen/stub VE feature path writes a reproducible feature-cache artifact with manifest, frame policy, time-span policy, git SHA, and config metadata.
+- [ ] Tiny IDM train/infer path consumes tokenized data or cached features and writes predictions plus confidence/calibration fields in the expected schema.
+- [ ] Pseudo-label materialization consumes IDM outputs and writes pseudo-label artifacts outside the source dataset tree.
+- [ ] Tiny FDM train/infer path consumes GT and pseudo-label inputs and writes prediction artifacts.
+- [ ] Evaluation entrypoint consumes IDM/FDM predictions, invokes or wraps the official D2E evaluator path where applicable, and writes compatibility JSON plus any evaluator smoke outputs.
+- [ ] The E2E orchestration layer stays thin; it must not inline component logic that belongs in `src/fdm_1_with_d2e/` modules or committed configs.
+
+### Compatibility / test checks
+
+- [ ] Local unit/integration tests validate schema compatibility across tokenizer, VE cache, IDM output, pseudo-label dataset, FDM input/output, and evaluator input.
+- [ ] Contract tests show later phase components can replace Phase 0.5 stub/tiny implementations behind the same interfaces without changing downstream artifact consumers.
+- [ ] End-to-end fixture smoke test runs without GPU and records exact `uv run ...` command/output.
+- [ ] Tiny real-D2E MLXP smoke run is recorded when real D2E data access is required for interface validation.
+- [ ] FDM no-future-visual leakage guard test passes for the chosen visual-bin indexing policy.
+- [ ] Generated artifacts are written only under project artifact paths, never inside `/mnt/ddn/extra-ddn-continuous-gui/`.
+- [ ] Run record captures git SHA, config paths, artifact paths, command, environment, and known interface limitations.
+- [ ] Phase 0.5 results are reported as compatibility/test evidence only; no VE/IDM/FDM quality claim is made from this phase.
+- [ ] Stub, tiny, or naive Phase 0.5 implementations are listed as compatibility fixtures and replacement/audit requirements for later phases; they do not complete Phase 1 VE, Phase 2 IDM, Phase 3 pseudo-label, or Phase 4 FDM objectives.
+
+### Artifacts / decisions
+
+- [ ] E2E spine config path:
+- [ ] Component contract/schema paths:
+- [ ] E2E fixture test command/output:
+- [ ] Tiny real-D2E run record, if used:
+- [ ] Interface/schema revisions:
+- [ ] Stub/tiny implementation replacement requirements:
+- [ ] Known compatibility limitations:
+
 ## Phase 1 — Video encoder domain-gap audit and gameplay adaptation
 
 Goal: determine whether frozen pretrained video features are enough and, if not, adapt a video encoder toward D2E gameplay/screen representations.
