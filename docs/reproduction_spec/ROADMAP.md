@@ -25,39 +25,39 @@ Goal: build the deterministic D2E/action/evaluation foundation used by every lat
 
 ### Implementation
 
-- [ ] D2E/OWAMcap reader loads labeled `.mkv` + `.mcap` recordings.
-- [ ] Video frame/timestep sampler maps 60fps video to canonical 50ms bins.
-- [ ] 50ms action binning aggregates mouse HID deltas, keyboard, buttons, and scroll events.
-- [ ] Action tokenizer/de-tokenizer supports fixed mouse/event slots and special tokens.
-- [ ] Prediction-to-MCAP/event writer round-trips model outputs into evaluator-compatible events.
-- [ ] Split manifests are generated for train/validation/test and held-out-game splits.
-- [ ] Scale manifests are generated for `10%`, `50%`, `100%` and optional `1%/5%/25%`.
-- [ ] Per-game action distribution summaries are generated.
+- [x] D2E/OWAMcap reader loads labeled `.mkv` + `.mcap` recordings (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; manifest `phase0-dataset-75ae762b7c5aed63`, 459 labeled pairs / 29 games).
+- [x] Video frame/timestep sampler maps 60fps video to canonical 50ms bins (`tests/unit/data/test_binning.py`; `notes/runs/20260605-phase0-overlay-sanity.md`).
+- [x] 50ms action binning aggregates mouse HID deltas, keyboard, buttons, and scroll events (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; Apex decoded counts keyboard `8262`, mouse_move `77071`, mouse_button `676`, scroll `593`).
+- [x] Action tokenizer/de-tokenizer supports fixed mouse/event slots and special tokens (`tests/unit/tokenization/`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md` tokenized mode).
+- [x] Prediction-to-MCAP/event writer round-trips model outputs into evaluator-compatible events (`notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`; exact writer official metrics all 1.0 / near-1.0, tokenized writer official mouse Pearson X/Y `0.9952/0.9957`).
+- [x] Split manifests are generated for train/validation/test and held-out-game splits (`phase0-split-56832b5d5d8c31e6`; train `367`, val `46`, test `46`, held-out `0`).
+- [x] Scale manifests are generated for `10%`, `50%`, `100%` and optional `1%/5%/25%` (`phase0-scale-726895836126a6ef`; includes `5%`, `10%`, `50%`, `100%`).
+- [x] Per-game action distribution summaries are generated (`phase0-action-distribution-1b2de09a5ae4dc24`; 29 one-per-game summaries, no-op fraction `0.516233987751`, overflow `0.0`).
 
 ### Evaluation / sanity checks
 
-- [ ] Video timestamps align with input events on sampled recordings.
-- [ ] Keyboard/mouse overlay visualizations look plausible.
-- [ ] Raw HID deltas reconstruct plausible movement.
-- [ ] No-op/event distributions are logged by game and split.
-- [ ] Event overflow is below threshold or explained.
-- [ ] GT action round-trip passes evaluator and writer checks.
+- [x] Video timestamps align with input events on sampled recordings (`notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`; official first-screen PTS alignment over `29242` Apex bins).
+- [x] Keyboard/mouse overlay visualizations look plausible (`notes/runs/20260605-phase0-overlay-sanity.md`; six Apex overlay PNGs inspected).
+- [x] Raw HID deltas reconstruct plausible movement (`notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`; exact writer mouse Pearson X/Y `1.0/0.9999999999999998`, scale X/Y `1.0/1.0`).
+- [x] No-op/event distributions are logged by game and split (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; action distribution artifact `phase0-action-distribution-1b2de09a5ae4dc24`).
+- [x] Event overflow is below threshold or explained (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md` overflow `0.0`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md` tokenized overflow bins `0`).
+- [x] GT action round-trip passes evaluator and writer checks (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`).
 
 ### References and floor checks
 
-- [ ] D2E-Generalist-IDM-1B inference/evaluation path is located and versioned.
-- [ ] IDM CE/MLM/no-op/action-frequency sanity paths are available only as floors/diagnostics.
-- [ ] FDM no-op, previous-action, action-only, and video-only floor paths are available.
-- [ ] Initial FDM-1 target-gap rubric draft is written from public claims and local harness categories.
-- [ ] Frozen-encoder probe scaffold is available for domain-gap checks.
+- [x] D2E-Generalist-IDM-1B inference/evaluation path is located and versioned (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; D2E repo `80e98e26e4dc584ec76fec5789b4a97c275dd032`, model `open-world-agents/Generalist-IDM-1B`).
+- [x] IDM CE/MLM/no-op/action-frequency sanity paths are available only as floors/diagnostics (`src/fdm_1_with_d2e/models/floors.py`; `tests/unit/models/test_floors.py`; commit `21cf0b1`).
+- [x] FDM no-op, previous-action, action-only, and video-only floor paths are available (`src/fdm_1_with_d2e/models/floors.py`; `tests/unit/models/test_floors.py`).
+- [x] Initial FDM-1 target-gap rubric draft is written from public claims and local harness categories (`notes/experiments/20260605-phase0-fdm1-target-gap-rubric-draft.md`).
+- [x] Frozen-encoder probe scaffold is available for domain-gap checks (`src/fdm_1_with_d2e/video/scaffold.py`; `tests/unit/video/test_scaffold.py`).
 
 ### Artifacts / decisions
 
-- [ ] Dataset manifest ID:
-- [ ] Split manifest ID:
-- [ ] Action tokenizer revision:
-- [ ] Evaluator revision:
-- [ ] Phase 0 report section:
+- [x] Dataset manifest ID: `phase0-dataset-75ae762b7c5aed63` (`outputs/phase0/real-d2e-smoke/20260605-g009-f801bce/artifacts/dataset_manifest.json`).
+- [x] Split manifest ID: `phase0-split-56832b5d5d8c31e6` (`outputs/phase0/real-d2e-smoke/20260605-g009-f801bce/artifacts/split_manifest.json`).
+- [x] Action tokenizer revision: fixed `K=8`, 49x49 signed exponential mouse bins, special tokens and overflow accounting (`src/fdm_1_with_d2e/tokenization/`; verified through commit `21cf0b1`).
+- [x] Evaluator revision: local evaluator/writer code through commit `21cf0b1`; pinned official D2E evaluator commit `80e98e26e4dc584ec76fec5789b4a97c275dd032`.
+- [x] Phase 0 report section: run-record bundle in `notes/runs/20260605-phase0-local-evidence.md`, `notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`, `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`, and `notes/runs/20260605-phase0-overlay-sanity.md`.
 
 ## Phase 0.5 — Thin end-to-end integration spine
 
