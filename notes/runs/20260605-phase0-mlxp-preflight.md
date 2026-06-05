@@ -83,3 +83,12 @@ After dataset discovery, add the smallest feasible reader/timestamp/evaluator sm
 - The current package has an optional OWAMcap adapter, but real OWAMcap schema compatibility is intentionally not proven until G009.
 - The Phase 0 image is CPU/offline focused. If real MCAP decoding needs additional `mcap-owa-support`/`owa-msgs` packages, G009 should record the exact dependency blocker and either run via `uv run --with ...` or add a follow-up implementation/image story.
 - Official D2E `evaluate.py` invocation is still a required follow-up for phase exit when practical.
+
+## G009 final image addendum
+
+The initial preflight image `phase0-20260605-19f7220` was used for the first exploratory real-D2E smoke, which exposed a committed-code gap for JSON/JSONSchema MCAP action decoding. After implementing and pushing the decoder, the final replayable G009 run used:
+
+- Code SHA: `f801bce287bafbd8ea8b1d2e225dcd707a8fba72`
+- Image: `docker.io/pjh6029/fdm-1-with-d2e:phase0-20260605-f801bce@sha256:4a78401935fa9660aab5f17ea5872dfc21a1f67cba0df269a4ac50ae287d2ae1`
+- Reservation: `rsv-jeonghunpark-20260606-525828` in `production` / `p-production`, one H200 GPU on node 5, cancelled after artifact capture.
+- Final artifact root: `outputs/phase0/real-d2e-smoke/20260605-g009-f801bce/`.
