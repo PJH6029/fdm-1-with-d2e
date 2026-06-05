@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phase Plan"
+  short_description: "Review phase-level research plans."
+  default_prompt: "Use phase-plan to create or review a notes/plans/phase-* research plan, run Architect then Critic review, and return APPROVE, REVISE, or ESCALATE_TO_RALPLAN before Ultragoal."

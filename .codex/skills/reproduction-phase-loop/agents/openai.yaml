@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reproduction Phase Loop"
+  short_description: "Run one ROADMAP phase with durable gates."
+  default_prompt: "Use reproduction-phase-loop to run the selected FDM-1/D2E ROADMAP phase through GPT-Pro gates, phase-plan review, optional ralplan escalation, mandatory Ultragoal ledger stories, delegated research-executor or team execution, phase-exit GPT-Pro review, and evidence-backed ROADMAP/DECISIONS updates."

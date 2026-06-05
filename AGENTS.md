@@ -10,6 +10,12 @@ This repository is for a serious D2E-based reproduction of the public FDM-1 trai
 - Decision register: `docs/reproduction_spec/DECISIONS.md`.
 - Component/protocol details: `docs/reproduction_spec/spec/`.
 - Literature survey: `docs/literature_survey/`.
+- Repo-local reproduction workflow skills and agents:
+  - `.codex/skills/reproduction-phase-loop/` for phase-level lifecycle supervision over GPT-Pro gates, phase planning, Ultragoal ledgers, execution handoff, and evidence-backed phase exit;
+  - `.codex/skills/gpt-pro-query/` for Playwright-driven ChatGPT Pro review artifacts;
+  - `.codex/skills/phase-plan/` for phase-level research plan drafting/review before Ultragoal;
+  - `.codex/agents/research-architect.toml` and `.codex/agents/research-critic.toml` for phase-plan quality gates;
+  - `.codex/agents/research-executor.toml` for bounded Ultragoal story implementation/evidence packets.
 
 For normal reproduction execution, treat every file under `docs/reproduction_spec/` as read-only except:
 
@@ -19,6 +25,36 @@ For normal reproduction execution, treat every file under `docs/reproduction_spe
 Do not use `AGENTS.md`, `CANONICAL_SPEC.md`, `OPERATIONAL_RULES.md`, or component specs as work logs. Edit specs only when the user explicitly asks for a spec revision.
 
 At the end of every substantive task, review `ROADMAP.md` and `DECISIONS.md`. If the work completes checklist items, changes status, or resolves an open choice, update the relevant checkboxes/decision slots.
+
+## Autonomous reproduction phase workflow
+
+Treat each `ROADMAP.md` phase as a self-contained autonomous research loop. Before starting a phase or major phase story, use the repo-local `$reproduction-phase-loop` skill as the default harness rather than directly implementing from the canonical spec.
+
+The phase loop is:
+
+1. inspect local spec and current evidence;
+2. identify current literature gaps, method gaps, and stale assumptions;
+3. use `$gpt-pro-query` when a required gate or material uncertainty calls for ChatGPT Pro critique;
+4. verify Pro claims against primary sources and update `docs/literature_survey/` only with curated, source-checked survey text;
+5. run `$phase-plan` to draft/review a phase-level research plan under `notes/plans/phase-*/` with `research-architect -> research-critic`;
+6. run `$ralplan --deliberate` only when `$phase-plan` returns `ESCALATE_TO_RALPLAN` or material risk requires implementation-focused consensus;
+7. create or update the mandatory `$ultragoal` phase ledger from the approved phase plan or ralplan handoff;
+8. delegate executable Ultragoal stories to native `research-executor` subagents for bounded work or `$team` for coordinated parallel work;
+9. verify execution evidence packets and checkpoint Ultragoal from concrete evidence;
+10. complete Ultragoal terminal stories for phase-exit GPT-Pro review, review integration, `ROADMAP.md` update, `DECISIONS.md` update, and notes/run-record completion.
+
+The `$reproduction-phase-loop` agent is the phase lifecycle supervisor, not the default implementation owner. Execution workers return evidence packets and implications; the supervisor owns Ultragoal checkpoints and evidence-backed `ROADMAP.md` / `DECISIONS.md` updates.
+
+Required GPT-Pro gates:
+
+- before VE finetuning: gameplay/screen-recording domain adaptation, SSL objective, encoder candidate;
+- before IDM implementation: masked diffusion / discrete diffusion / action inverse modeling objective;
+- before FDM implementation: diffusion vs. AR vs. hybrid, pseudo-label filtering, temporal conditioning;
+- before scaling/ablation: whether each axis has real research value;
+- after failed branches: what to abandon, modify, or test next;
+- before phase exit: whether evidence is sufficient to move to the next phase.
+
+Do not use `ROADMAP.md` or `DECISIONS.md` as pre-implementation planning surfaces. Store pre-implementation phase sub-specs in `notes/plans/phase-*/*.md`; store GPT-Pro thread/turn artifacts in `notes/investigations/gpt_pro/<phase>/<date-topic>/` following `$gpt-pro-query`.
 
 ## Repository structure
 
@@ -62,9 +98,11 @@ fdm-1-with-d2e/
   tests/
   docker/
   notes/
+    plans/
     runs/
     experiments/
     investigations/
+      gpt_pro/
     failures/
 
   outputs/        # generated, ignored
@@ -87,7 +125,7 @@ Structure rules:
 
 - Do not force all work onto one long-lived branch. Create task branches or git worktrees when that keeps work isolated and reviewable.
 - Parallelize independent implementation or investigation lanes with multiple worktrees when it improves throughput and reduces merge risk.
-- OMX workflows such as `ralph`, `team`, `autopilot`, and related skills may be used for implementation, verification, and coordinated multi-lane work when appropriate.
+- For normal `ROADMAP.md` phase execution, prefer `$reproduction-phase-loop`; inside that loop, executable stories should go to native `research-executor` subagents or `$team` rather than ad-hoc direct implementation. Broader OMX workflows such as `ralph`, `team`, `autopilot`, and related skills may still be used outside the phase loop when explicitly appropriate.
 - Prefer periodic, focused commits over one large end-of-project commit. Each commit should be reviewable, reversible, and tied to a coherent change.
 - Merge task branches/worktrees back through normal git workflows after verification. Resolve conflicts deliberately and rerun the relevant checks.
 - GitHub CLI is available and authenticated in the local environment; use it when it helps with branch/PR/repo management, issue lookup, or CI inspection.
@@ -124,7 +162,9 @@ Use subdirectories rather than loose markdown files directly under `notes/`:
 
 - `notes/runs/` — MLXP run records, command/config/checkpoint/metric pointers, W&B links, reservation IDs.
 - `notes/experiments/` — ablation/scaling summaries, interpretation, tables copied from metrics, comparison notes.
+- `notes/plans/` — pre-implementation phase-level sub-specs and execution plans created by `$reproduction-phase-loop`.
 - `notes/investigations/` — debugging, data inspection, implementation research, root-cause analysis.
+- `notes/investigations/gpt_pro/` — ChatGPT Pro thread/turn artifacts created by `$gpt-pro-query`, organized as `<phase>/<date-topic>/` with thread metadata plus per-turn prompt/response/integration files.
 - `notes/failures/` — failed runs, negative results, harness failures, reproduction gaps that should inform the final report.
 
 Recommended filename format: `YYYYMMDD-<stage>-<short-topic>.md`, for example `notes/runs/20260604-idm-tiny-mdlm16.md`.
