@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/d2e_reference.schema.json",
+  "title": "D2E upstream reference record",
+  "type": "object",
+  "required": [
+    "schema",
+    "reference_id",
+    "upstream_repo",
+    "upstream_commit",
+    "model_id",
+    "dataset_id",
+    "command_templates",
+    "deviation_table",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "schemas/d2e_reference.schema.json"},
+    "reference_id": {"type": "string"},
+    "upstream_repo": {"type": "string"},
+    "upstream_commit": {"type": "string"},
+    "upstream_commit_checked_at": {"type": "string"},
+    "upstream_files": {
+      "type": "object",
+      "required": ["evaluate_py", "inference_py"],
+      "additionalProperties": false,
+      "properties": {
+        "evaluate_py": {"type": "string"},
+        "inference_py": {"type": "string"}
+      }
+    },
+    "model_id": {"type": "string"},
+    "dataset_id": {"type": "string"},
+    "official_metric_timebase_ms": {"type": "integer", "const": 50},
+    "command_templates": {
+      "type": "object",
+      "required": ["inference", "evaluate"],
+      "additionalProperties": false,
+      "properties": {
+        "inference": {"type": "string"},
+        "evaluate": {"type": "string"}
+      }
+    },
+    "command_examples": {
+      "type": "object",
+      "required": ["inference", "evaluate"],
+      "additionalProperties": false,
+      "properties": {
+        "inference": {"type": "string"},
+        "evaluate": {"type": "string"}
+      }
+    },
+    "local_evaluator": {
+      "type": "object",
+      "required": ["evaluator_id", "metric_revision", "config"],
+      "additionalProperties": false,
+      "properties": {
+        "evaluator_id": {"type": "string"},
+        "metric_revision": {"type": "string"},
+        "config": {"type": "string"}
+      }
+    },
+    "deviation_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "deviation_id",
+          "category",
+          "status",
+          "severity",
+          "official_behavior",
+          "local_behavior",
+          "reason",
+          "followup"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "deviation_id": {"type": "string"},
+          "category": {"type": "string"},
+          "status": {"type": "string"},
+          "severity": {"type": "string"},
+          "official_behavior": {"type": "string"},
+          "local_behavior": {"type": "string"},
+          "reason": {"type": "string"},
+          "followup": {"type": "string"}
+        }
+      }
+    },
+    "created_by_story": {
+      "enum": [
+        "G001-bootstrap-package-configs-and-schema",
+        "G005-implement-evaluator-and-official-d2e"
+      ]
+    },
+    "default_tests_offline": {"type": "boolean"},
+    "network_required_for_live_check": {"type": "boolean"},
+    "live_check_status": {"type": "string"},
+    "notes": {"type": "string"}
+  }
+}

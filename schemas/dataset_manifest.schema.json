@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/dataset_manifest.schema.json",
+  "title": "Phase 0 D2E dataset manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "manifest_id",
+    "dataset_name",
+    "dataset_root",
+    "recordings",
+    "timebase_ms",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "schemas/dataset_manifest.schema.json"
+    },
+    "manifest_id": {
+      "type": "string"
+    },
+    "dataset_name": {
+      "type": "string"
+    },
+    "dataset_root": {
+      "type": ["string", "null"]
+    },
+    "timebase_ms": {
+      "type": "integer",
+      "const": 50
+    },
+    "recording_count": {
+      "type": "integer"
+    },
+    "game_count": {
+      "type": "integer"
+    },
+    "games": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "checksum_algorithm": {
+      "type": ["string", "null"]
+    },
+    "recordings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "recording_id",
+          "game",
+          "video_path",
+          "mcap_path"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "recording_id": {"type": "string"},
+          "game": {"type": "string"},
+          "stem": {"type": "string"},
+          "split": {"type": "string"},
+          "video_path": {"type": "string"},
+          "mcap_path": {"type": "string"},
+          "video_size_bytes": {"type": "integer"},
+          "mcap_size_bytes": {"type": "integer"},
+          "size_bytes_total": {"type": "integer"},
+          "video_sha256": {"type": ["string", "null"]},
+          "mcap_sha256": {"type": ["string", "null"]},
+          "checksum": {"type": ["string", "null"]},
+          "duration_ns": {"type": ["integer", "null"]},
+          "duration_seconds": {"type": ["number", "null"]},
+          "timebase_bin_count": {"type": ["integer", "null"]}
+        }
+      }
+    },
+    "created_by_story": {
+      "enum": [
+        "G001-bootstrap-package-configs-and-schema",
+        "G004-implement-manifests-and-action-distr"
+      ]
+    },
+    "offline_bootstrap_only": {"type": "boolean"},
+    "notes": {"type": "string"}
+  }
+}

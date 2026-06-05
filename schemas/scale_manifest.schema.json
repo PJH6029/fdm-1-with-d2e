@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/scale_manifest.schema.json",
+  "title": "Phase 0 scale manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "manifest_id",
+    "source_split_manifest_id",
+    "scale_policy",
+    "scales",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "schemas/scale_manifest.schema.json"},
+    "manifest_id": {"type": "string"},
+    "source_split_manifest_id": {"type": "string"},
+    "source_dataset_manifest_id": {"type": ["string", "null"]},
+    "scale_policy": {"type": "string"},
+    "seed": {"type": "integer"},
+    "source_split": {"type": "string"},
+    "percentages": {"type": "array", "items": {"type": "integer"}},
+    "scales": {
+      "type": "object",
+      "required": ["10_percent", "50_percent", "100_percent"],
+      "additionalProperties": false,
+      "properties": {
+        "1_percent": {"type": "array", "items": {"type": "string"}},
+        "5_percent": {"type": "array", "items": {"type": "string"}},
+        "10_percent": {"type": "array", "items": {"type": "string"}},
+        "25_percent": {"type": "array", "items": {"type": "string"}},
+        "50_percent": {"type": "array", "items": {"type": "string"}},
+        "100_percent": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "scale_counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer"}
+    },
+    "validation": {"type": "array", "items": {"type": "string"}},
+    "test": {"type": "array", "items": {"type": "string"}},
+    "held_out_test": {"type": "array", "items": {"type": "string"}},
+    "created_by_story": {
+      "enum": [
+        "G001-bootstrap-package-configs-and-schema",
+        "G004-implement-manifests-and-action-distr"
+      ]
+    },
+    "offline_bootstrap_only": {"type": "boolean"},
+    "notes": {"type": "string"}
+  }
+}

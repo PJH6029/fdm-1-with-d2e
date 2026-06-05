@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/action_distribution.schema.json",
+  "title": "Phase 0 action distribution summary",
+  "type": "object",
+  "required": [
+    "schema",
+    "manifest_id",
+    "source_dataset_manifest_id",
+    "timebase_ms",
+    "summaries",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "schemas/action_distribution.schema.json"},
+    "manifest_id": {"type": "string"},
+    "source_dataset_manifest_id": {"type": "string"},
+    "timebase_ms": {"type": "integer", "const": 50},
+    "recording_count": {"type": "integer"},
+    "game_count": {"type": "integer"},
+    "summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["game", "recording_count", "bin_count"],
+        "additionalProperties": true,
+        "properties": {
+          "game": {"type": "string"},
+          "recording_count": {"type": "integer"},
+          "recording_ids": {"type": "array", "items": {"type": "string"}},
+          "bin_count": {"type": "integer"},
+          "active_action_bin_count": {"type": "integer"},
+          "no_op_bin_count": {"type": "integer"},
+          "no_op_rate": {"type": "number"},
+          "event_count": {"type": "integer"},
+          "event_family_counts": {"type": "object", "additionalProperties": {"type": "integer"}},
+          "token_family_counts": {"type": "object", "additionalProperties": {"type": "integer"}},
+          "overflow_bin_count": {"type": "integer"},
+          "overflow_event_count": {"type": "integer"},
+          "overflow_rate": {"type": "number"},
+          "raw_mouse_magnitude_summary": {"type": "object", "additionalProperties": true}
+        }
+      }
+    },
+    "totals": {"type": "object", "additionalProperties": true},
+    "created_by_story": {
+      "enum": [
+        "G001-bootstrap-package-configs-and-schema",
+        "G004-implement-manifests-and-action-distr"
+      ]
+    },
+    "offline_bootstrap_only": {"type": "boolean"},
+    "notes": {"type": "string"}
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "schemas/evaluation_config.schema.json",
+  "evaluator_id": "phase0-d2e-local-fixture-v1",
+  "metric_revision": "d2e-local-50ms-actionbin-v1",
+  "timebase_ms": 50,
+  "metrics": [
+    "mouse_pearson_x",
+    "mouse_pearson_y",
+    "mouse_scale_ratio_x",
+    "mouse_scale_ratio_y",
+    "mouse_button_accuracy",
+    "keyboard_key_accuracy"
+  ],
+  "official_reference": "configs/data/d2e_reference.json",
+  "output_schema": "schemas/evaluation_metrics.schema.json",
+  "aggregation": [
+    "micro",
+    "per_recording",
+    "per_game",
+    "per_game_macro"
+  ],
+  "metric_formulas": {
+    "mouse_pearson": "population Pearson correlation over per-bin raw mouse deltas; NA when either axis series has zero variance or fewer than two bins",
+    "mouse_scale_ratio": "unsigned population-standard-deviation ratio max(std_gt,std_pred)/min(std_gt,std_pred), reported >=1 when defined and NA for zero/near-zero scale",
+    "mouse_button_accuracy": "per-bin exact count-multiset match for left/right/middle down/up mouse-button events",
+    "keyboard_key_accuracy": "per-bin exact count-multiset match by key and keyboard event type"
+  },
+  "created_by_story": "G005-implement-evaluator-and-official-d2e",
+  "default_tests_offline": true,
+  "implementation_status": "local_fixture_metrics_and_official_reference_record_implemented",
+  "notes": "Local D2E-style fixture evaluator is dependency-light; headline real-D2E runs should invoke pinned official D2E evaluate.py or record deviations."
+}

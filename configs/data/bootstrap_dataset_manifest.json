@@ -1,0 +1,11 @@
+{
+  "schema": "schemas/dataset_manifest.schema.json",
+  "manifest_id": "phase0-bootstrap-empty-dataset-v0",
+  "dataset_name": "D2E-480p",
+  "dataset_root": null,
+  "recordings": [],
+  "timebase_ms": 50,
+  "created_by_story": "G001-bootstrap-package-configs-and-schema",
+  "offline_bootstrap_only": true,
+  "notes": "Empty placeholder manifest contract only. Real D2E discovery is G002/G004 and must treat the MLXP dataset root as read-only."
+}

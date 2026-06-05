@@ -1,0 +1,25 @@
+{
+  "schema": "schemas/manifest_builder_config.schema.json",
+  "builder_id": "phase0-manifest-builders-g004-v0",
+  "timebase_ms": 50,
+  "split_seed": 0,
+  "split_fractions": {
+    "train": 0.8,
+    "validation": 0.1,
+    "test": 0.1
+  },
+  "scale_percentages": [
+    10,
+    50,
+    100
+  ],
+  "optional_scale_percentages": [
+    1,
+    5,
+    25
+  ],
+  "checksum_algorithm": "sha256",
+  "artifact_write_guard": "reject output paths inside dataset_root",
+  "created_by_story": "G004-implement-manifests-and-action-distr",
+  "notes": "Default local builder policy for deterministic dataset/split/scale/action-distribution manifests. Tests use synthetic temp fixtures; real D2E runs are a later MLXP story."
+}

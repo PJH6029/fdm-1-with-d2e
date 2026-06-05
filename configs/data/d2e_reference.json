@@ -1,0 +1,64 @@
+{
+  "command_examples": {
+    "evaluate": "uv run evaluate.py ground_truth.mcap predicted.mcap --output results.json",
+    "inference": "uv run inference.py gameplay.mp4 predicted.mcap --max-duration 30"
+  },
+  "command_templates": {
+    "evaluate": "uv run evaluate.py {ground_truth_mcap} {predicted_mcap} --output {results_json}",
+    "inference": "uv run inference.py {gameplay_mp4} {predicted_mcap} --max-duration {max_duration_seconds}"
+  },
+  "created_by_story": "G005-implement-evaluator-and-official-d2e",
+  "dataset_id": "open-world-agents/D2E-480p",
+  "default_tests_offline": true,
+  "deviation_table": [
+    {
+      "category": "official_invocation",
+      "deviation_id": "official_evaluate_py_not_invoked_in_default_tests",
+      "followup": "After commit/push and operational preflight, invoke uv run evaluate.py at the pinned D2E commit on a generated or real MCAP smoke fixture, or update this table with the exact blocker.",
+      "local_behavior": "Default tests call local ActionBin metrics and do not clone GitHub, load MCAP, contact Hugging Face, MLXP, or D2E data.",
+      "official_behavior": "Run pinned D2E evaluate.py over ground-truth and predicted MCAP files.",
+      "reason": "Phase 0 fixture tests must be deterministic and offline; official invocation is reserved for the later real-D2E/MLXP evidence story.",
+      "severity": "high",
+      "status": "blocked_by_offline_contract"
+    },
+    {
+      "category": "metric_formula",
+      "deviation_id": "local_scale_ratio_formula_reimplementation",
+      "followup": "Compare local fixture output against official evaluate.py on the same MCAP fixture once MCAP writer/reader compatibility is available.",
+      "local_behavior": "Fixture evaluator reports an unsigned population-stddev ratio max(std_gt,std_pred)/min(std_gt,std_pred), with NA for zero/near-zero axis scale.",
+      "official_behavior": "Use the scale-ratio formula in D2E evaluate.py at the pinned upstream revision for headline reports.",
+      "reason": "Local tests need a transparent no-dependency formula; real reports must either verify parity against evaluate.py or cite formula differences.",
+      "severity": "medium",
+      "status": "known_local_reimplementation"
+    },
+    {
+      "category": "prediction_output",
+      "deviation_id": "writer_records_are_not_mcap_files",
+      "followup": "Implement or enable the MCAP writer adapter, then run official evaluate.py or record the exact schema/dependency blocker.",
+      "local_behavior": "Round-trip fixture wrappers reconstruct canonical events and writer-compatible dictionaries, not serialized MCAP files.",
+      "official_behavior": "D2E inference/evaluation consumes and emits MCAP files.",
+      "reason": "MCAP serialization and real OWAMcap schema compatibility are dependency-gated and must be proven in a bounded real-D2E smoke story.",
+      "severity": "medium",
+      "status": "known_fixture_boundary"
+    }
+  ],
+  "live_check_status": "not_run_by_default_offline_tests",
+  "local_evaluator": {
+    "config": "configs/evaluation/d2e_local.json",
+    "evaluator_id": "phase0-d2e-local-fixture-v1",
+    "metric_revision": "d2e-local-50ms-actionbin-v1"
+  },
+  "model_id": "open-world-agents/Generalist-IDM-1B",
+  "network_required_for_live_check": true,
+  "notes": "Pinned official D2E reference path; local fixture tests do not clone, download, contact Hugging Face, or invoke MCAP evaluation.",
+  "official_metric_timebase_ms": 50,
+  "reference_id": "d2e-upstream-80e98e26-generalist-idm-1b-reference-v1",
+  "schema": "schemas/d2e_reference.schema.json",
+  "upstream_commit": "80e98e26e4dc584ec76fec5789b4a97c275dd032",
+  "upstream_commit_checked_at": "2026-06-05",
+  "upstream_files": {
+    "evaluate_py": "evaluate.py",
+    "inference_py": "inference.py"
+  },
+  "upstream_repo": "https://github.com/worv-ai/D2E"
+}

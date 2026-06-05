@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/split_manifest.schema.json",
+  "title": "Phase 0 split manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "manifest_id",
+    "source_dataset_manifest_id",
+    "split_policy",
+    "train",
+    "validation",
+    "test",
+    "held_out_games",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "schemas/split_manifest.schema.json"},
+    "manifest_id": {"type": "string"},
+    "source_dataset_manifest_id": {"type": "string"},
+    "split_policy": {"type": "string"},
+    "seed": {"type": "integer"},
+    "fractions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "train": {"type": "number"},
+        "validation": {"type": "number"},
+        "test": {"type": "number"}
+      }
+    },
+    "train": {"type": "array", "items": {"type": "string"}},
+    "validation": {"type": "array", "items": {"type": "string"}},
+    "test": {"type": "array", "items": {"type": "string"}},
+    "held_out_games": {"type": "array", "items": {"type": "string"}},
+    "held_out_test": {"type": "array", "items": {"type": "string"}},
+    "counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer"}
+    },
+    "per_game_counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"type": "integer"}
+      }
+    },
+    "underfilled_games": {"type": "array", "items": {"type": "string"}},
+    "created_by_story": {
+      "enum": [
+        "G001-bootstrap-package-configs-and-schema",
+        "G004-implement-manifests-and-action-distr"
+      ]
+    },
+    "offline_bootstrap_only": {"type": "boolean"},
+    "notes": {"type": "string"}
+  }
+}

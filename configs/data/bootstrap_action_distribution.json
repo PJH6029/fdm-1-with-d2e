@@ -1,0 +1,10 @@
+{
+  "schema": "schemas/action_distribution.schema.json",
+  "manifest_id": "phase0-bootstrap-action-distribution-v0",
+  "source_dataset_manifest_id": "phase0-bootstrap-empty-dataset-v0",
+  "timebase_ms": 50,
+  "summaries": [],
+  "created_by_story": "G001-bootstrap-package-configs-and-schema",
+  "offline_bootstrap_only": true,
+  "notes": "Action distribution shape only; real no-op/action/mouse/overflow summaries are G004/G009."
+}

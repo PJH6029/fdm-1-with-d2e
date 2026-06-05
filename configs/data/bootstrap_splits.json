@@ -1,0 +1,13 @@
+{
+  "schema": "schemas/split_manifest.schema.json",
+  "manifest_id": "phase0-bootstrap-splits-v0",
+  "source_dataset_manifest_id": "phase0-bootstrap-empty-dataset-v0",
+  "split_policy": "placeholder-only; deterministic train/validation/test and held-out-game construction is G004",
+  "train": [],
+  "validation": [],
+  "test": [],
+  "held_out_games": [],
+  "created_by_story": "G001-bootstrap-package-configs-and-schema",
+  "offline_bootstrap_only": true,
+  "notes": "Committed schema-shaped config for later split generation; no live dataset access in G001."
+}

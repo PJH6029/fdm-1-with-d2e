@@ -1,0 +1,27 @@
+{
+  "schema": "schemas/experiment_config.schema.json",
+  "experiment_id": "phase0-bootstrap-offline-v0",
+  "phase": "phase-0-data",
+  "story_id": "G001-bootstrap-package-configs-and-schema",
+  "offline_only": true,
+  "configs": {
+    "dataset_manifest": "configs/data/bootstrap_dataset_manifest.json",
+    "split_manifest": "configs/data/bootstrap_splits.json",
+    "scale_manifest": "configs/data/bootstrap_scales.json",
+    "action_distribution": "configs/data/bootstrap_action_distribution.json",
+    "tokenization": "configs/tokenization/default.json",
+    "evaluation": "configs/evaluation/d2e_local.json",
+    "d2e_reference": "configs/data/d2e_reference.json"
+  },
+  "verification_commands": [
+    "uv run pytest tests/unit tests/smoke",
+    "uv run python -c 'import fdm_1_with_d2e; print(fdm_1_with_d2e.bootstrap_contract())'"
+  ],
+  "prohibited_inputs": [
+    "live_network",
+    "hugging_face_download",
+    "mlxp",
+    "d2e_dataset"
+  ],
+  "notes": "Bootstrap experiment config used only to prove imports/config/schema tests remain offline."
+}

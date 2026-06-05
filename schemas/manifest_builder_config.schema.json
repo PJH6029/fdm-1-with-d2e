@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/manifest_builder_config.schema.json",
+  "title": "Phase 0 manifest builder config",
+  "type": "object",
+  "required": [
+    "schema",
+    "builder_id",
+    "timebase_ms",
+    "split_seed",
+    "split_fractions",
+    "scale_percentages",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "schemas/manifest_builder_config.schema.json"},
+    "builder_id": {"type": "string"},
+    "timebase_ms": {"type": "integer", "const": 50},
+    "split_seed": {"type": "integer"},
+    "split_fractions": {
+      "type": "object",
+      "required": ["train", "validation", "test"],
+      "additionalProperties": false,
+      "properties": {
+        "train": {"type": "number"},
+        "validation": {"type": "number"},
+        "test": {"type": "number"}
+      }
+    },
+    "scale_percentages": {"type": "array", "items": {"type": "integer"}},
+    "optional_scale_percentages": {"type": "array", "items": {"type": "integer"}},
+    "checksum_algorithm": {"type": "string"},
+    "artifact_write_guard": {"type": "string"},
+    "created_by_story": {"const": "G004-implement-manifests-and-action-distr"},
+    "notes": {"type": "string"}
+  }
+}

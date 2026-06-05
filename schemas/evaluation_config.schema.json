@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/evaluation_config.schema.json",
+  "title": "Phase 0 D2E evaluation config",
+  "type": "object",
+  "required": [
+    "schema",
+    "evaluator_id",
+    "metric_revision",
+    "timebase_ms",
+    "metrics",
+    "official_reference",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "schemas/evaluation_config.schema.json"},
+    "evaluator_id": {"type": "string"},
+    "metric_revision": {"type": "string"},
+    "timebase_ms": {"type": "integer", "const": 50},
+    "metrics": {"type": "array", "minItems": 6, "items": {"type": "string"}},
+    "official_reference": {"type": "string"},
+    "output_schema": {"type": "string"},
+    "aggregation": {"type": "array", "items": {"type": "string"}},
+    "metric_formulas": {
+      "type": "object",
+      "required": ["mouse_pearson", "mouse_scale_ratio", "mouse_button_accuracy", "keyboard_key_accuracy"],
+      "additionalProperties": false,
+      "properties": {
+        "mouse_pearson": {"type": "string"},
+        "mouse_scale_ratio": {"type": "string"},
+        "mouse_button_accuracy": {"type": "string"},
+        "keyboard_key_accuracy": {"type": "string"}
+      }
+    },
+    "created_by_story": {
+      "enum": [
+        "G001-bootstrap-package-configs-and-schema",
+        "G005-implement-evaluator-and-official-d2e"
+      ]
+    },
+    "default_tests_offline": {"type": "boolean"},
+    "implementation_status": {"type": "string"},
+    "notes": {"type": "string"}
+  }
+}

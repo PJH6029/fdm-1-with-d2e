@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/tokenization_config.schema.json",
+  "title": "Phase 0 action tokenization config",
+  "type": "object",
+  "required": [
+    "schema",
+    "tokenizer_id",
+    "timebase_ms",
+    "sparse_event_slots",
+    "mouse_bins_per_axis",
+    "special_tokens",
+    "overflow_policy",
+    "created_by_story"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "schemas/tokenization_config.schema.json"
+    },
+    "tokenizer_id": {
+      "type": "string"
+    },
+    "timebase_ms": {
+      "type": "integer",
+      "const": 50
+    },
+    "sparse_event_slots": {
+      "type": "integer",
+      "const": 8
+    },
+    "mouse_bins_per_axis": {
+      "type": "integer",
+      "const": 49
+    },
+    "special_tokens": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "string"
+      }
+    },
+    "overflow_policy": {
+      "type": "object",
+      "required": [
+        "threshold_fraction",
+        "preserve_order"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "threshold_fraction": {
+          "type": "number"
+        },
+        "preserve_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "created_by_story": {
+      "const": "G001-bootstrap-package-configs-and-schema"
+    },
+    "implementation_status": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

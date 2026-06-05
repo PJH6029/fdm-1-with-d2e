@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/evaluation_metrics.schema.json",
+  "title": "D2E local evaluation metrics record",
+  "type": "object",
+  "required": [
+    "schema",
+    "evaluator_id",
+    "metric_revision",
+    "timebase_ms",
+    "aggregation",
+    "coverage",
+    "created_by_story"
+  ],
+  "properties": {
+    "schema": {"const": "schemas/evaluation_metrics.schema.json"},
+    "evaluator_id": {"type": "string"},
+    "metric_revision": {"type": "string"},
+    "created_by_story": {"const": "G005-implement-evaluator-and-official-d2e"},
+    "timebase_ms": {"type": "integer", "const": 50},
+    "aggregation": {"type": "string"},
+    "group": {"type": "object"},
+    "coverage": {"type": "object"},
+    "metrics": {"type": "object"},
+    "formula_notes": {"type": "object"},
+    "micro": {"type": "object"},
+    "per_recording": {"type": "object"},
+    "per_game": {"type": "object"},
+    "per_game_macro": {"type": "object"}
+  }
+}

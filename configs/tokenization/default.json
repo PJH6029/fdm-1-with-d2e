@@ -1,0 +1,27 @@
+{
+  "schema": "schemas/tokenization_config.schema.json",
+  "tokenizer_id": "phase0-action-tokenizer-default-v0",
+  "timebase_ms": 50,
+  "sparse_event_slots": 8,
+  "mouse_bins_per_axis": 49,
+  "special_tokens": [
+    "MASK_ACTION",
+    "NO_ACTION",
+    "PAD_ACTION",
+    "BOS_ACTION",
+    "EOS_ACTION",
+    "EVENT_OVERFLOW"
+  ],
+  "overflow_policy": {
+    "threshold_fraction": 0.001,
+    "preserve_order": [
+      "mouse_button",
+      "key_down",
+      "key_up",
+      "scroll"
+    ]
+  },
+  "created_by_story": "G001-bootstrap-package-configs-and-schema",
+  "implementation_status": "implemented_by_G003_action_tokenizer_de_tokenizer_roundtrip",
+  "notes": "Matches canonical defaults: 50ms bins, K=8 sparse event slots, 49x49 mouse bins, special tokens; implementation lives under src/fdm_1_with_d2e/tokenization/."
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdm-1-with-d2e.local/schemas/experiment_config.schema.json",
+  "title": "Phase 0 experiment config",
+  "type": "object",
+  "required": [
+    "schema",
+    "experiment_id",
+    "phase",
+    "story_id",
+    "offline_only",
+    "configs",
+    "verification_commands"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "schemas/experiment_config.schema.json"
+    },
+    "experiment_id": {
+      "type": "string"
+    },
+    "phase": {
+      "const": "phase-0-data"
+    },
+    "story_id": {
+      "const": "G001-bootstrap-package-configs-and-schema"
+    },
+    "offline_only": {
+      "type": "boolean",
+      "const": true
+    },
+    "configs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "prohibited_inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

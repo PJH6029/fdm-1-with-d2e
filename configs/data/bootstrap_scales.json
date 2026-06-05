@@ -1,0 +1,14 @@
+{
+  "schema": "schemas/scale_manifest.schema.json",
+  "manifest_id": "phase0-bootstrap-scales-v0",
+  "source_split_manifest_id": "phase0-bootstrap-splits-v0",
+  "scale_policy": "placeholder-only; later G004 fills deterministic 10/50/100 percent subsets from real split manifests",
+  "scales": {
+    "10_percent": [],
+    "50_percent": [],
+    "100_percent": []
+  },
+  "created_by_story": "G001-bootstrap-package-configs-and-schema",
+  "offline_bootstrap_only": true,
+  "notes": "Scale manifest contract exists before real manifest generation."
+}

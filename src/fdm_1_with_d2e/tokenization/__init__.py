@@ -1,0 +1,88 @@
+"""Action vocabulary, tokenization, and de-tokenization contracts."""
+
+from __future__ import annotations
+
+from fdm_1_with_d2e.tokenization.action_vocab import (
+    ActionTokenFamily,
+    ActionVocabulary,
+    BOS_ACTION,
+    DEFAULT_ACTION_VOCAB,
+    DEFAULT_MOUSE_BINS_PER_AXIS,
+    DEFAULT_MOUSE_MAX_ABS_DELTA,
+    DEFAULT_MOUSE_QUANTIZER,
+    DEFAULT_MOUSE_SIGNED_BINS_PER_SIDE,
+    DEFAULT_MOUSE_ZERO_BIN_INDEX,
+    DEFAULT_SPARSE_EVENT_SLOTS,
+    EOS_ACTION,
+    EVENT_OVERFLOW,
+    MASK_ACTION,
+    NO_ACTION,
+    PAD_ACTION,
+    SPECIAL_TOKEN_SET,
+    SPECIAL_TOKENS,
+    MouseAxisBin,
+    MouseAxisQuantizer,
+    MouseMoveBin,
+    MouseQuantizer,
+    ParsedKeyboardToken,
+    ParsedMouseButtonToken,
+    exponential_positive_edges,
+    is_special_token,
+)
+from fdm_1_with_d2e.tokenization.actions import (
+    ActionSlot,
+    ActionTokenizer,
+    DEFAULT_ACTION_TOKENIZER,
+    OverflowRecord,
+    TokenizedActionBin,
+    TokenizedActionSequence,
+    detokenize_action_bin,
+    detokenize_flat_action_sequence,
+    tokenize_action_bin,
+    tokenize_action_bins,
+)
+
+# Preserve the bootstrap smoke-test contract while exposing the implemented G003
+# surfaces through TOKENIZER_STATUS and the exported functions/classes below.
+BOOTSTRAP_STATUS = "placeholder_contract_only"
+TOKENIZER_STATUS = "action_tokenizer_de_tokenizer_implemented"
+
+__all__ = [
+    "ActionSlot",
+    "ActionTokenFamily",
+    "ActionTokenizer",
+    "ActionVocabulary",
+    "BOOTSTRAP_STATUS",
+    "BOS_ACTION",
+    "DEFAULT_ACTION_TOKENIZER",
+    "DEFAULT_ACTION_VOCAB",
+    "DEFAULT_MOUSE_BINS_PER_AXIS",
+    "DEFAULT_MOUSE_MAX_ABS_DELTA",
+    "DEFAULT_MOUSE_QUANTIZER",
+    "DEFAULT_MOUSE_SIGNED_BINS_PER_SIDE",
+    "DEFAULT_MOUSE_ZERO_BIN_INDEX",
+    "DEFAULT_SPARSE_EVENT_SLOTS",
+    "EOS_ACTION",
+    "EVENT_OVERFLOW",
+    "MASK_ACTION",
+    "NO_ACTION",
+    "OverflowRecord",
+    "PAD_ACTION",
+    "SPECIAL_TOKEN_SET",
+    "SPECIAL_TOKENS",
+    "TOKENIZER_STATUS",
+    "TokenizedActionBin",
+    "TokenizedActionSequence",
+    "MouseAxisBin",
+    "MouseAxisQuantizer",
+    "MouseMoveBin",
+    "MouseQuantizer",
+    "ParsedKeyboardToken",
+    "ParsedMouseButtonToken",
+    "detokenize_action_bin",
+    "detokenize_flat_action_sequence",
+    "exponential_positive_edges",
+    "is_special_token",
+    "tokenize_action_bin",
+    "tokenize_action_bins",
+]
