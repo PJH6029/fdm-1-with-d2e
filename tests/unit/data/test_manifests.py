@@ -117,6 +117,21 @@ def test_split_heldout_and_scale_manifests_are_deterministic_and_grouped(tmp_pat
     assert scales["scales"]["100_percent"] == sorted(split["train"])
 
 
+def test_scale_manifest_optional_percentages_are_nested_by_game(tmp_path: Path) -> None:
+    root = _fixture_dataset(tmp_path, games=("alpha", "beta"), per_game=20)
+    manifest = build_dataset_manifest(discover_labeled_recordings(root), dataset_root=root)
+    split = build_train_val_test_split_manifest(manifest, seed=123)
+
+    scales = build_scale_manifest(split, dataset_manifest=manifest, optional_percentages=(5,), seed=123)
+
+    five = set(scales["scales"]["5_percent"])
+    ten = set(scales["scales"]["10_percent"])
+    fifty = set(scales["scales"]["50_percent"])
+    full = set(scales["scales"]["100_percent"])
+    assert five <= ten <= fifty <= full
+    assert full == set(split["train"])
+
+
 def test_artifact_guard_rejects_dataset_tree_outputs(tmp_path: Path) -> None:
     root = tmp_path / "d2e"
     root.mkdir()

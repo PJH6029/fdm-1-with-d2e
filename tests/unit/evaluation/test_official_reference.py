@@ -14,6 +14,7 @@ from fdm_1_with_d2e.evaluation import (
     load_official_reference_record,
     reference_summary,
     shell_join,
+    stable_json_dumps,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -61,6 +62,12 @@ def test_committed_reference_record_loads_without_network() -> None:
     assert summary["offline_only"] is True
     assert summary["upstream_commit"] == DEFAULT_UPSTREAM_COMMIT
     assert summary["deviation_count"] >= 3
+
+
+def test_committed_reference_record_matches_default_builder() -> None:
+    expected = stable_json_dumps(build_official_reference_record()) + "\n"
+
+    assert (REPO_ROOT / "configs/data/d2e_reference.json").read_text(encoding="utf-8") == expected
 
 
 def test_custom_deviation_can_be_embedded() -> None:

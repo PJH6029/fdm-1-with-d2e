@@ -5,10 +5,9 @@ Scope: Phase 0 only — data pipeline, evaluator, and sanity checks. This summar
 
 ## Final status
 
-Phase 0 is evidence-complete for the roadmap scope after the final writer-produced MCAP official-evaluator blocker from GPT-Pro was resolved and terminal ROADMAP/DECISIONS updates were made from concrete evidence.
+Phase 0 is evidence-complete for the roadmap scope after the final writer-produced MCAP official-evaluator blocker from GPT-Pro was resolved, final review blockers were fixed, and terminal ROADMAP/DECISIONS updates were made from concrete evidence.
 
-Latest pushed branch at summary creation: `codex/phase-0`  
-Latest code/decision SHA before this summary note: `fbc821403acda45dc7d86820d4a85fd482e11318`
+Latest pushed branch at summary creation and final review-fix update: `codex/phase-0`
 
 ## Core evidence bundle
 
@@ -29,8 +28,9 @@ Latest code/decision SHA before this summary note: `fbc821403acda45dc7d86820d4a8
 - Official/local evaluator and writer support: `src/fdm_1_with_d2e/evaluation/`, `scripts/d2e_generate_roundtrip_prediction_mcap.py`.
 - Manifest/action distribution builders: `src/fdm_1_with_d2e/data/manifests.py`, manifest CLIs.
 - Floor/probe/target-gap scaffolds: `src/fdm_1_with_d2e/models/floors.py`, `src/fdm_1_with_d2e/video/scaffold.py`, `src/fdm_1_with_d2e/reporting/target_gap.py`.
-- Final local verification after terminal updates:
-  - `uv run --locked pytest -q` → `62 passed`
+- Final local verification after terminal review fixes:
+  - `uv run --locked pytest tests/unit/data/test_manifests.py::test_scale_manifest_optional_percentages_are_nested_by_game tests/unit/evaluation/test_official_reference.py::test_committed_reference_record_matches_default_builder -q` → `2 passed`
+  - `uv run --locked pytest -q` → `64 passed`
   - `uv run --locked python -m compileall src scripts tests` → passed
   - `git diff --check` → passed
 
@@ -41,6 +41,7 @@ Run records:
 - `notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`
 - `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`
 - `notes/runs/20260605-phase0-overlay-sanity.md`
+- `notes/runs/20260605-phase0-final-review-fixes.md`
 
 Key real-D2E artifacts:
 
@@ -54,7 +55,7 @@ Dataset/source evidence:
 - Dataset root: `/mnt/ddn/extra-ddn-continuous-gui` (treated read-only in every run).
 - Dataset manifest: `phase0-dataset-75ae762b7c5aed63`, 459 labeled `.mkv`/`.mcap` pairs, 29 games.
 - Split manifest: `phase0-split-56832b5d5d8c31e6`, train `367`, validation `46`, test `46`, held-out `0`.
-- Scale manifest: `phase0-scale-726895836126a6ef`, 5%=36, 10%=50, 50%=193, 100%=367 train recordings.
+- Scale manifest: `phase0-scale-d32d102e3412cfbe`, regenerated from copied real-D2E dataset/split manifests after the final review nesting fix; 5%=36, 10%=50, 50%=193, 100%=367 train recordings with 5⊆10⊆50⊆100 proof in `notes/runs/20260605-phase0-final-review-fixes.md`.
 - Action distribution: `phase0-action-distribution-1b2de09a5ae4dc24`, 29 one-per-game summaries, 1,832,113 bins, 1,161,652 events, no-op fraction `0.516233987751`, overflow `0.0`.
 
 Official D2E evaluator evidence:
@@ -91,8 +92,8 @@ Overlay sanity:
 
 ## ROADMAP / DECISIONS terminal updates
 
-- `docs/reproduction_spec/ROADMAP.md` Phase 0 checkboxes updated from concrete evidence only at commit `c2a31a2`; Phase 0.5 and later phases remain untouched.
-- `docs/reproduction_spec/DECISIONS.md` finalized Phase 0 data/tokenization/evaluator/operational decisions at commit `fbc8214`; future VE/IDM/FDM training and harness decisions remain blank/deferred.
+- `docs/reproduction_spec/ROADMAP.md` Phase 0 checkboxes were updated from concrete evidence only, then refreshed after final review-fix evidence for the nested scale manifest; Phase 0.5 and later phases remain untouched.
+- `docs/reproduction_spec/DECISIONS.md` finalized Phase 0 data/tokenization/evaluator/operational decisions, then refreshed after final review-fix evidence for nested scale construction and committed D2E reference-record parity; future VE/IDM/FDM training and harness decisions remain blank/deferred.
 
 ## Known limitations and deferrals
 

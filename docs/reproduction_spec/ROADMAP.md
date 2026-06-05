@@ -31,7 +31,7 @@ Goal: build the deterministic D2E/action/evaluation foundation used by every lat
 - [x] Action tokenizer/de-tokenizer supports fixed mouse/event slots and special tokens (`tests/unit/tokenization/`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md` tokenized mode).
 - [x] Prediction-to-MCAP/event writer round-trips model outputs into evaluator-compatible events (`notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`; exact writer official metrics all 1.0 / near-1.0, tokenized writer official mouse Pearson X/Y `0.9952/0.9957`).
 - [x] Split manifests are generated for train/validation/test and held-out-game splits (`phase0-split-56832b5d5d8c31e6`; train `367`, val `46`, test `46`, held-out `0`).
-- [x] Scale manifests are generated for `10%`, `50%`, `100%` and optional `1%/5%/25%` (`phase0-scale-726895836126a6ef`; includes `5%`, `10%`, `50%`, `100%`).
+- [x] Scale manifests are generated for `10%`, `50%`, `100%` and optional `1%/5%/25%` (`phase0-scale-d32d102e3412cfbe`; regenerated nested proof includes `5%`, `10%`, `50%`, `100%` and `5⊆10⊆50⊆100`).
 - [x] Per-game action distribution summaries are generated (`phase0-action-distribution-1b2de09a5ae4dc24`; 29 one-per-game summaries, no-op fraction `0.516233987751`, overflow `0.0`).
 
 ### Evaluation / sanity checks

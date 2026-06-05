@@ -793,7 +793,7 @@ def _select_scale_ids_by_game(
         groups[game_by_id.get(recording_id, "")].append(recording_id)
     selected: list[str] = []
     for game in sorted(groups, key=str.casefold):
-        ordered = _stable_shuffle(groups[game], seed, f"scale:{percentage}:{game}")
+        ordered = _stable_shuffle(groups[game], seed, f"scale:{game}")
         take = _scale_take_count(len(ordered), percentage)
         selected.extend(ordered[:take])
     if percentage == 100:
