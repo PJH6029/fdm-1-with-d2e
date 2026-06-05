@@ -1,0 +1,4 @@
+interface:
+  display_name: "GPT-Pro Query"
+  short_description: "Query ChatGPT Pro and save artifacts."
+  default_prompt: "Use gpt-pro-query to ask ChatGPT Pro one focused research or review question and save prompt, response, metadata, and integration notes."
