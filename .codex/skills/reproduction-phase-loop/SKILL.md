@@ -67,6 +67,7 @@ Before any MLXP, GPU, Docker, W&B, or D2E-data-dependent run, the supervisor mus
 - the D2E dataset path `/mnt/ddn/extra-ddn-continuous-gui/` is read-only;
 - outputs, caches, checkpoints, pseudo-labels, reports, and temp files are never written inside the dataset tree;
 - cluster jobs use a custom public Docker Hub image under `docker.io/pjh6029/fdm-1-with-d2e` with an immutable tag and recorded digest, not `latest` for training/evaluation;
+- do not use the MLXP `debug` namespace/project for this repo; production reservations must stay within one node;
 - non-trivial training/evaluation logs use W&B entity `pjh6029-seoul-national-university` and project `fdm-1-with-d2e`;
 - idle GPU pods are cancelled, and reservations use the smallest efficient GPU count.
 
@@ -211,7 +212,16 @@ Before phase exit, the Ultragoal ledger must include and complete these terminal
 4. **Update `DECISIONS.md` from final supported decisions** — fill only finalized decision slots supported by phase evidence.
 5. **Write/complete notes and run records** — ensure `notes/runs/`, `notes/experiments/`, `notes/investigations/`, or `notes/failures/` contain the necessary evidence pointers.
 
-If any terminal story is missing, add it before phase exit using `omx ultragoal steer --kind add_subgoal` with evidence explaining why it is required.
+If any terminal story is missing, add it before phase exit with explicit Ultragoal steering, for example:
+
+```sh
+omx ultragoal steer \
+  --kind add_subgoal \
+  --title "Run phase-exit GPT-Pro review" \
+  --objective "Submit current phase evidence as result-phase-exit-review, save prompt/response/integration artifacts, and return a next-phase readiness verdict." \
+  --evidence "goals.json lacks a phase-exit review story" \
+  --rationale "Phase exit is gated on GPT-Pro review and evidence integration."
+```
 
 Phase-exit review evidence must cite concrete artifacts such as:
 
@@ -223,6 +233,8 @@ notes/investigations/gpt_pro/phase-X/.../synthesis.md
 ```
 
 Record story checkpoints with `omx ultragoal checkpoint --goal-id <id> --status complete --evidence "<artifact paths and verdict>" --codex-goal-json <fresh get_goal JSON or path>` when Codex goal reconciliation is required by Ultragoal.
+
+Ultragoal final completion must also satisfy the installed Ultragoal final quality gate, including cleanup/review/verification and `--quality-gate-json` when required.
 
 ## Executor lane selection
 

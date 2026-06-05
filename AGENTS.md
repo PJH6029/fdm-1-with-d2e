@@ -151,6 +151,7 @@ Structure rules:
 - Use `MLXP.md` and `docs/reproduction_spec/OPERATIONAL_RULES.md` for reservation payload details. `MLXP_ACCESS_TOKEN` is in `.env`; never commit secrets.
 - Routine MLXP reservations/cancellations within this project are pre-authorized. Use the `mlxp-reservation-api` workflow when reserving, inspecting, or cancelling pods.
 - Use custom public Docker Hub images for cluster jobs, default repo `docker.io/pjh6029/fdm-1-with-d2e`. Prefer immutable tags like `<role>-<yyyymmdd>-<gitsha>` and record image digest; do not use `latest` for training/evaluation jobs.
+- Do not use the MLXP `debug` namespace/project for this repo; production reservations must stay within one node.
 - Reserve the smallest GPU count that keeps the job efficient. Use 1 GPU for smoke/data/Tiny checks and 2–4 H200 GPUs only when the path is multi-GPU ready. Cancel pods when the next expected work is local coding, docs, or long non-GPU inspection.
 - Use W&B for non-trivial training/evaluation logs with entity `pjh6029-seoul-national-university` and project `fdm-1-with-d2e`; keep `WANDB_API_KEY` in `.env` only.
 

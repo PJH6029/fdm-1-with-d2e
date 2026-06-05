@@ -19,7 +19,9 @@ Create and review phase-level research briefs for the FDM-1/D2E reproduction loo
 - MLXP cluster/resource plan;
 - staged judgments that must not be copied into `ROADMAP.md` or `DECISIONS.md` before implementation or experiment evidence exists.
 
-`$ralplan` artifacts are **implementation-focused consensus handoffs**. They belong under `.omx/plans/` and should include PRD/test-spec/ADR, concrete acceptance criteria, Architect -> Critic approval, and an execution-ready plan for `$ultragoal`, `$team`, or `$ralph`.
+`$ralplan` artifacts are **implementation-focused consensus handoffs**. They belong under `.omx/plans/` and should include PRD/test-spec/ADR, concrete acceptance criteria, Architect -> Critic approval, and an execution-ready plan for `$ultragoal`.
+
+If `$ralplan` is used, its handoff becomes an Ultragoal brief or cited Ultragoal input. Later execution remains delegated through the reproduction-phase-loop executor lane: bounded stories go to native `research-executor`, and complex/parallel stories go to `$team`.
 
 If escalation to `$ralplan` is needed, keep the phase plan as a thin index/brief: why ralplan is needed, which GPT-Pro/literature evidence should be fed into it, and where the resulting `.omx/plans/` artifact lives. Do not duplicate PRD/test-spec content in `notes/plans/phase-*`.
 
@@ -81,4 +83,4 @@ The Research Architect and Research Critic must check:
 - Do not modify `ROADMAP.md` or `DECISIONS.md` while drafting or reviewing the phase plan.
 - Do not use phase plan approval as phase progress evidence. Progress requires implementation, run, or verification artifacts.
 - Do not let GPT-Pro decide alone; the plan must state how external recommendations were verified, adopted, deferred, or rejected.
-- Do not start `$ralph` from a phase plan unless an Ultragoal story or ralplan handoff already gives a concrete execute/test scope.
+- Do not execute directly from a phase plan. Convert the approved phase plan or ralplan handoff into Ultragoal first, then delegate executable stories to `research-executor` or `$team`.

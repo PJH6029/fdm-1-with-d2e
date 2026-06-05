@@ -81,6 +81,7 @@ Before any MLXP/GPU/D2E-data-dependent run, enforce this checklist and record it
 - Use cluster repo path `/mnt/ddn/prod-runs/jeonghunpark/code/continuous-gui-poc/fdm-1-with-d2e`.
 - Treat D2E dataset path `/mnt/ddn/extra-ddn-continuous-gui/` as read-only; never write outputs, caches, checkpoints, pseudo-labels, temp files, or reports into the dataset tree.
 - Use a custom public Docker image from `docker.io/pjh6029/fdm-1-with-d2e` with an immutable tag and record the image digest; do not use `latest` for training/evaluation jobs.
+- Do not use the MLXP `debug` namespace/project for this repo; production reservations must stay within one node.
 - Use W&B entity `pjh6029-seoul-national-university` and project `fdm-1-with-d2e` for non-trivial training/evaluation logs; never expose or commit `WANDB_API_KEY`.
 - Reserve the smallest GPU count that keeps the job efficient. Cancel the pod when GPU work will be idle.
 - Store generated outputs under project artifact locations outside the dataset tree and cite paths in the run record.
