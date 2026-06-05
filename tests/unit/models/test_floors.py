@@ -21,6 +21,8 @@ from fdm_1_with_d2e.models.floors import (
     fdm_previous_action_floor,
     fdm_video_only_floor,
     idm_action_frequency_floor,
+    idm_ce_floor,
+    idm_mlm_floor,
     idm_no_op_floor,
 )
 
@@ -34,6 +36,8 @@ def test_all_floor_contracts_are_explicit_diagnostic_placeholders() -> None:
     assert {contract.floor_id for contract in contracts} == {
         "idm-no-op-zero-mouse-floor-v0",
         "idm-action-frequency-floor-v0",
+        "idm-ce-one-shot-classifier-diagnostic-v0",
+        "idm-mlm-random-mask-denoising-diagnostic-v0",
         "fdm-b0-no-op-zero-mouse-floor-v0",
         "fdm-b1-previous-action-repeat-floor-v0",
         "fdm-b2-action-only-diagnostic-v0",
@@ -114,6 +118,10 @@ def test_nontrivial_floor_predictions_raise_explicit_not_implemented_boundaries(
 
     with pytest.raises(NotImplementedError, match="action-distribution artifact"):
         idm_action_frequency_floor().predict_bins(template)
+    with pytest.raises(NotImplementedError, match="IDM objective diagnostic"):
+        idm_ce_floor().predict_bins(template, context={"video_features": []})
+    with pytest.raises(NotImplementedError, match="IDM objective diagnostic"):
+        idm_mlm_floor().predict_bins(template, context={"masked_actions": []})
     with pytest.raises(NotImplementedError, match="action-only model"):
         fdm_action_only_floor().predict_bins(template, context={"action_history": []})
     with pytest.raises(NotImplementedError, match="video features"):

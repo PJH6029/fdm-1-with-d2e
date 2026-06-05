@@ -38,6 +38,8 @@ class FloorKind(str, Enum):
     """Phase 0 floor/scaffold kinds required by the roadmap."""
 
     NO_OP = "no_op"
+    IDM_CE = "idm_ce"
+    IDM_MLM = "idm_mlm"
     ACTION_FREQUENCY = "action_frequency"
     PREVIOUS_ACTION = "previous_action"
     ACTION_ONLY = "action_only"
@@ -256,6 +258,22 @@ class ActionFrequencyFloorScaffold(DiagnosticFloorScaffold):
         )
 
 
+class IDMObjectiveDiagnosticScaffold(DiagnosticFloorScaffold):
+    """Contract for a future IDM objective diagnostic such as CE or MLM."""
+
+    def predict_bins(
+        self,
+        bin_templates: Sequence[ActionBin],
+        *,
+        context: Mapping[str, Any] | None = None,
+    ) -> FloorPredictionResult:
+        del bin_templates, context
+        raise NotImplementedError(
+            f"{self.floor_id} is a later IDM objective diagnostic requiring implemented video/action features "
+            f"and training; Phase 0 exposes only the {PLACEHOLDER_STATUS} contract."
+        )
+
+
 class ActionOnlyFloorScaffold(DiagnosticFloorScaffold):
     """Contract for a future FDM action-history-only transformer diagnostic."""
 
@@ -317,6 +335,43 @@ def idm_action_frequency_floor() -> ActionFrequencyFloorScaffold:
             implemented_behavior="not_implemented_until_verified_frequency_artifact",
             later_phase="Phase 2 IDM diagnostics",
             requires_fitted_statistics=True,
+        )
+    )
+
+
+def idm_ce_floor() -> IDMObjectiveDiagnosticScaffold:
+    """Return the IDM-CE one-shot classifier diagnostic contract."""
+
+    return IDMObjectiveDiagnosticScaffold(
+        FloorContract(
+            floor_id="idm-ce-one-shot-classifier-diagnostic-v0",
+            family=FloorModelFamily.IDM,
+            kind=FloorKind.IDM_CE,
+            label="IDM-CE one-shot classifier diagnostic",
+            description="Later non-causal classifier floor over target action slots; Phase 0 only exposes the diagnostic contract.",
+            implemented_behavior="not_implemented_until_later_idm_diagnostic_model",
+            later_phase="Phase 2 IDM diagnostics",
+            accepts_video=True,
+            requires_later_training=True,
+        )
+    )
+
+
+def idm_mlm_floor() -> IDMObjectiveDiagnosticScaffold:
+    """Return the IDM-MLM random-mask denoising diagnostic contract."""
+
+    return IDMObjectiveDiagnosticScaffold(
+        FloorContract(
+            floor_id="idm-mlm-random-mask-denoising-diagnostic-v0",
+            family=FloorModelFamily.IDM,
+            kind=FloorKind.IDM_MLM,
+            label="IDM-MLM random-mask denoising diagnostic",
+            description="Later random-mask denoising floor for isolating diffusion-schedule value; Phase 0 only exposes the diagnostic contract.",
+            implemented_behavior="not_implemented_until_later_idm_diagnostic_model",
+            later_phase="Phase 2 IDM diagnostics",
+            accepts_video=True,
+            accepts_action_history=True,
+            requires_later_training=True,
         )
     )
 
@@ -396,6 +451,8 @@ def all_floor_scaffolds() -> tuple[DiagnosticFloorScaffold, ...]:
     return (
         idm_no_op_floor(),
         idm_action_frequency_floor(),
+        idm_ce_floor(),
+        idm_mlm_floor(),
         fdm_no_op_floor(),
         fdm_previous_action_floor(),
         fdm_action_only_floor(),
@@ -494,6 +551,7 @@ __all__ = [
     "FloorKind",
     "FloorModelFamily",
     "FloorPredictionResult",
+    "IDMObjectiveDiagnosticScaffold",
     "NO_SUCCESS_CLAIM",
     "NoOpFloorScaffold",
     "PLACEHOLDER_STATUS",
@@ -506,6 +564,8 @@ __all__ = [
     "fdm_previous_action_floor",
     "fdm_video_only_floor",
     "idm_action_frequency_floor",
+    "idm_ce_floor",
+    "idm_mlm_floor",
     "idm_no_op_floor",
     "no_op_bin_from_template",
     "repeat_action_into_template",
