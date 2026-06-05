@@ -54,6 +54,8 @@ Ask the user before any materially broader external action, including: more than
 - Production reservations must stay within one node.
 - Do not use `debug` project/namespace. dataset path `/mnt/ddn/extra-ddn-continuous-gui/` is stale in the debug namespace.
 
+> Tip: To create a reservation immediately for empty slots, you can start from a cell that includes the current time. (e.g., if currently 15:36, reserve from 15:00)
+
 ## 4. Container/image policy
 
 - Cluster jobs must use a custom image from Docker Hub.
