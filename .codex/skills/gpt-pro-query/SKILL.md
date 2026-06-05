@@ -10,7 +10,7 @@ for a Pro query or ordinary web search for GPT-Pro unless the user explicitly sa
 
 ## Core Rules
 
-- **Use real ChatGPT Pro Extended:** use the browser-accessed Pro/Extended session through Playwright; do not silently substitute local models, `codex exec`, ordinary web search, or non-Pro modes.
+- **Use real ChatGPT Pro Extended:** use the browser-accessed Pro model with extended session through Playwright; do not silently substitute local models, `codex exec`, ordinary web search, or non-Pro modes. Common confusion: You should not use plain extended thinking mode. You should use the actual Pro • Extended.
 - **Pro has no local context:** summarize the repo evidence needed for judgment; Pro cannot see local code, logs, checkpoints, git history, or private metrics unless you include a distilled version.
 - **State the agent hypothesis first:** ask Pro to critique a candidate interpretation, plan, or success criterion; do not ask “what should we do?” from a blank slate.
 - **One focused question per turn:** keep each query centered on one bottleneck. Use multi-turn follow-up inside the same thread for the same line of inquiry; use a new thread for unrelated concerns.

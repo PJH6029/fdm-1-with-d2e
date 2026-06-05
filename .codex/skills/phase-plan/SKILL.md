@@ -32,6 +32,7 @@ If escalation to `$ralplan` is needed, keep the phase plan as a thin index/brief
 3. Run review before Ultragoal creation:
    - Prefer the repo-local `research-architect` native subagent first for phase-direction soundness, hidden coupling, method plausibility, and feasibility.
    - Then launch the repo-local `research-critic` native subagent with the draft and Research Architect review; the Research Critic must return exactly one verdict: `APPROVE`, `REVISE`, or `ESCALATE_TO_RALPLAN`.
+   - Runtime note: when using Codex native `spawn_agent`, pass the repo-local role as a top-level `agent_type` field even if the displayed tool schema omits it, e.g. `agent_type: "research-architect"` and then `agent_type: "research-critic"`. This is the routing control; do not rely on prompt text alone to self-label the reviewer.
    - Do not run the Architect and Critic reviews in parallel; preserve the Architect -> Critic sequence.
    - `research-architect` and `research-critic` are repo-local agents under `.codex/agents/` and are intentionally configured with `model = "gpt-5.5"` and `model_reasoning_effort = "xhigh"`. If the current runtime cannot discover project-local native agents until session reload, fall back to installed `architect` then `critic`, and record the degraded reviewer setting in the phase plan review result.
 4. If verdict is `REVISE`, update the phase plan and repeat review. Limit routine re-review to 5 loops before escalating or reporting the blocker.

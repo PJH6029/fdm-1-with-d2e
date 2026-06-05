@@ -93,4 +93,4 @@ Canonical source: `./CANONICAL_SPEC.md`. Record final decisions here as they are
 - MLXP reservation/run record location:
 - Artifact/checkpoint storage path:
 - Feature cache storage path:
-- WandB/TensorBoard/logging policy:
+- WandB/logging policy:

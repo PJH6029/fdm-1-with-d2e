@@ -59,6 +59,7 @@ The supervisor always owns:
 Execution is delegated by story shape:
 
 - **Small/bounded story:** launch a native `research-executor` subagent with the Ultragoal story, phase plan, relevant spec/literature context, and required evidence-packet format.
+- Runtime note: when using Codex native `spawn_agent`, pass the repo-local role as a top-level `agent_type` field even if the displayed tool schema omits it, e.g. `agent_type: "research-executor"`. This is the routing control; do not rely on prompt text alone to self-label the executor.
 - **Complex/parallel story:** use `$team` from the leader pane. Keep Ultragoal leader-owned; workers return task/evidence status only.
 
 Direct implementation by the phase supervisor is reserved for trivial edits to lifecycle artifacts or emergency recovery where delegation would add risk. Even then, preserve the same evidence-packet and checkpoint discipline.
@@ -271,6 +272,7 @@ Ultragoal final completion must also satisfy the installed Ultragoal final quali
 ## Gate 4: Execution lane and evidence packet
 
 - Use a native `research-executor` subagent for small or bounded Ultragoal stories. The assignment must include the execution packet below.
+- For native Codex dispatch, set top-level `agent_type: "research-executor"` on `spawn_agent` even if the displayed schema omits `agent_type`; this selects the repo-local agent prompt.
 - Use `$team` from an Ultragoal story when independent lanes can run in parallel, e.g. implementation, tests/evaluation, cluster operations, and literature verification. The supervisor must launch, monitor, and shut down Team according to the `$team` lifecycle and checkpoint Ultragoal only from terminal Team evidence.
 - Do not ask execution workers to mutate `.omx/ultragoal`, `ROADMAP.md`, or `DECISIONS.md`; workers return evidence packets and implications for the supervisor.
 - Use native subagents for bounded in-session checks where durable tmux workers are unnecessary; use `$team` when durable tmux coordination, worktrees, or long-running parallelism is required.
