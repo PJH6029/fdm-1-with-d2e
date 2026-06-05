@@ -37,7 +37,7 @@ For every 50ms bin:
 60fps D2E video → one visual timestep per action bin
 ```
 
-Implementation can use frame sampling, short-window pooling, or a temporal resampler, but the downstream token/action sequence must be aligned to 50ms bins.
+Implementation can use frame sampling, short-window pooling, or a temporal resampler, but the downstream token/action sequence must be aligned to 50ms bins. The visual timestep definition must record its time span. For causal FDM use, a visual timestep paired with action bin `A_t = [t, t+50ms)` may include only frames available at decision time `t`; if a pooled `VideoBin_t` uses frames inside `[t, t+50ms)`, it is non-causal and must be shifted/re-indexed before FDM training or evaluation.
 
 ## Event aggregation
 
@@ -73,7 +73,7 @@ VideoBin_t
 VideoBin_{t+1}
 ```
 
-For IDM, target action slots are replaced by `MASK_ACTION`. For FDM, previous action tokens are causal context and the next bin's action tokens are the target.
+For IDM, target action slots are replaced by `MASK_ACTION`, and non-causal future visual context is allowed only for inverse-dynamics labeling. For FDM, previous action tokens are causal context and the next bin's action tokens are the target; `VideoBin_t` is valid FDM context only when its frames end at or before decision time `t`, otherwise use a prior/re-indexed visual bin to avoid future visual leakage.
 
 ## Fixed action slots
 

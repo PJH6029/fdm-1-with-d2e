@@ -78,6 +78,7 @@ Before any MLXP/GPU/D2E-data-dependent run, enforce this checklist and record it
 - Read `docs/reproduction_spec/OPERATIONAL_RULES.md` for current payload/path rules.
 - Confirm local changes needed for the run are committed and pushed, or explicitly record why the story is only doing a local dry run.
 - Record git branch and SHA that the cluster clone must pull.
+- Use `uv` as the default Python environment/package/command runner for local checks and cluster jobs when Python tooling is involved; record any exception and resolved environment.
 - Use cluster repo path `/mnt/ddn/prod-runs/jeonghunpark/code/continuous-gui-poc/fdm-1-with-d2e`.
 - Treat D2E dataset path `/mnt/ddn/extra-ddn-continuous-gui/` as read-only; never write outputs, caches, checkpoints, pseudo-labels, temp files, or reports into the dataset tree.
 - Use a custom public Docker image from `docker.io/pjh6029/fdm-1-with-d2e` with an immutable tag and record the image digest; do not use `latest` for training/evaluation jobs.

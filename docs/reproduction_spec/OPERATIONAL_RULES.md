@@ -6,6 +6,7 @@ These rules govern execution logistics. Research choices belong in `CANONICAL_SP
 
 - Code and documentation are edited in the local repository.
 - GPU training, large feature extraction, pseudo-label generation, and full evaluation must run on the MLXP cluster.
+- Use `uv` as the default Python environment, package, and command runner for local checks and cluster jobs when Python tooling is involved. Prefer recorded `uv run ...` commands over ad-hoc `python`/`pip` invocations; if `uv` cannot be used, document the exception and resolved environment in the run record.
 - The corresponding cluster clone is:
 
 ```text

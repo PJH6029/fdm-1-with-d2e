@@ -29,12 +29,12 @@ All model predictions must be converted back to the canonical 50ms action/event 
 
 ### 2.1 D2E primary action metrics
 
-These are the headline IDM action metrics and the shared offline action-quality reference for FDM after prediction-to-event conversion. The implementation must match the D2E evaluator path whenever possible; if a wrapper is used, document the exact formula and any deviation.
+These are the headline IDM action metrics and the shared offline action-quality reference for FDM after prediction-to-event conversion. Use the official D2E `evaluate.py` path whenever possible. If a local wrapper or reimplementation is used, record the official evaluator revision, exact formula, and every deviation in the run record and report.
 
-- **Mouse Pearson X/Y:** Pearson correlation between predicted and ground-truth mouse deltas on each axis over evaluated 50ms bins. Report `NA` when an axis has zero variance and exclude `NA` from aggregate means with counts shown.
-- **Mouse scale ratio X/Y:** predicted-to-ground-truth mouse magnitude/scale ratio per axis according to the D2E evaluator formula. Report both axes and flag extreme values caused by near-zero GT variance.
-- **Mouse-button accuracy:** accuracy of mouse-button state/event predictions under the D2E evaluator schema.
-- **Keyboard key accuracy:** key-state/key-event accuracy under the D2E evaluator schema.
+- **Mouse Pearson X/Y:** aggregate raw mouse deltas per non-overlapping 50ms bin, then compute the official D2E evaluator Pearson correlation between predicted and ground-truth deltas on each axis. Report `NA` when an axis has zero variance and exclude `NA` from aggregate means with counts shown.
+- **Mouse scale ratio X/Y:** use the official D2E evaluator scale-ratio formula. Treat it as an unsigned magnitude-consistency ratio reported as `>= 1`, not as a signed predicted/ground-truth ratio. Report both axes and flag extreme values caused by near-zero GT or predicted movement.
+- **Mouse-button accuracy:** official D2E per-bin count-match accuracy for left/right/middle down/up mouse-button events.
+- **Keyboard key accuracy:** official D2E per-bin count-match accuracy by key and keyboard event type.
 
 ### 2.2 Token and event diagnostics
 

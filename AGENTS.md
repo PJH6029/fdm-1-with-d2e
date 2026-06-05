@@ -135,6 +135,7 @@ Structure rules:
 
 - Edit code/docs locally in this repository.
 - GPU training, large feature extraction, pseudo-label generation, full evaluation, and dataset-dependent runs must execute on the MLXP cluster.
+- Use `uv` as the default Python environment, package, and command runner for local checks and cluster jobs when Python tooling is involved; record exceptions and resolved environments in run records.
 - Default workflow:
   1. local edit and small local checks;
   2. commit and push;

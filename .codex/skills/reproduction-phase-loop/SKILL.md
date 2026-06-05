@@ -65,6 +65,12 @@ Direct implementation by the phase supervisor is reserved for trivial edits to l
 
 Phase success requires implementation/experiment evidence, phase-exit GPT-Pro review, completed terminal stories, and the installed Ultragoal final quality gate. A plan, phase-plan approval, or ralplan artifact is never phase success by itself.
 
+## Research posture
+
+Treat every ROADMAP phase as a serious reproduction research effort, not a shallow checklist pass. Achieving the goal may require a thorough modern literature survey, dogged exploration of difficult implementation/experiment branches, and novel approaches when obvious baselines or copied recipes fail.
+
+Do not under-explore. If the first plausible path is weak, blocked, or contradicted by evidence, deepen the literature/GPT-Pro review, revise the phase plan, steer or split Ultragoal stories, and redispatch execution until the phase goal is either achieved or the remaining blocker is concrete, evidence-backed, and escalated through the appropriate gate.
+
 ## Canonical workflow
 
 Run this loop for the selected phase until evidence-backed phase success:
@@ -116,6 +122,7 @@ Before any MLXP, GPU, Docker, W&B, or D2E-data-dependent run, the supervisor mus
 
 - `docs/reproduction_spec/OPERATIONAL_RULES.md` was read for current payload/path rules;
 - local edit -> commit/push -> cluster clone pull -> run is the default path;
+- `uv` is used as the default Python environment/package/command runner for local checks and cluster jobs when Python tooling is involved, or the exception is recorded;
 - the cluster clone path is `/mnt/ddn/prod-runs/jeonghunpark/code/continuous-gui-poc/fdm-1-with-d2e`;
 - the D2E dataset path `/mnt/ddn/extra-ddn-continuous-gui/` is read-only;
 - outputs, caches, checkpoints, pseudo-labels, reports, and temp files are never written inside the dataset tree;
