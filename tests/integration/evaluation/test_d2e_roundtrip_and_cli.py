@@ -99,3 +99,22 @@ def test_locate_reference_cli_emits_pinned_official_record_without_network() -> 
     assert payload["record"]["model_id"] == "open-world-agents/Generalist-IDM-1B"
     assert payload["rendered_commands"]["evaluate"].startswith("uv run evaluate.py")
     assert result.stderr == ""
+
+
+def test_official_roundtrip_writer_cli_reports_offline_availability_without_owa_deps() -> None:
+    result = subprocess.run(
+        [sys.executable, str(REPO_ROOT / "scripts/d2e_generate_roundtrip_prediction_mcap.py"), "--json"],
+        cwd=REPO_ROOT,
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    payload = json.loads(result.stdout)
+
+    assert payload["status"] == "official_writer_roundtrip_cli_available"
+    assert payload["offline_only"] is True
+    assert payload["requires_optional_owa_dependencies_for_generation"] is True
+    assert payload["action_modes"] == ["exact", "tokenized"]
+    assert payload["required_topics"] == ["screen", "keyboard", "mouse/raw"]
+    assert result.stderr == ""

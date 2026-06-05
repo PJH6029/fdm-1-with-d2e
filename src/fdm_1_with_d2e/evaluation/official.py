@@ -135,12 +135,12 @@ def default_offline_deviations() -> tuple[D2EDeviation, ...]:
         D2EDeviation(
             deviation_id="writer_records_are_not_mcap_files",
             category="prediction_output",
-            status="known_fixture_boundary",
+            status="offline_fixture_boundary_with_optional_writer_adapter",
             severity="medium",
             official_behavior="D2E inference/evaluation consumes and emits MCAP files.",
-            local_behavior="Round-trip fixture wrappers reconstruct canonical events and writer-compatible dictionaries, not serialized MCAP files.",
-            reason="MCAP serialization and real OWAMcap schema compatibility are dependency-gated and must be proven in a bounded real-D2E smoke story.",
-            followup="Implement or enable the MCAP writer adapter, then run official evaluate.py or record the exact schema/dependency blocker.",
+            local_behavior="Default offline fixture wrappers reconstruct canonical events and writer-compatible dictionaries; the G015 optional adapter can serialize exact-reemit and repo-tokenized prediction MCAPs when OWA/MCAP runtime packages are installed.",
+            reason="Default tests remain dependency-light and cannot import mcap_owa/owa.msgs or open real D2E recordings.",
+            followup="Run scripts/d2e_generate_roundtrip_prediction_mcap.py on MLXP for both --action-mode exact and --action-mode tokenized, then score outputs with pinned official evaluate.py and record provenance hashes/sizes.",
         ),
     )
 
