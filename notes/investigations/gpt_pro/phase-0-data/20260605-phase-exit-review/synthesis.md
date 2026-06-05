@@ -13,3 +13,5 @@ Rejected/deferred claims:
 
 Next action:
 - Add/execute a follow-up Ultragoal story for a real-recording writer-produced MCAP official-evaluator round-trip with file provenance/hash evidence.
+
+Primary-source check: pinned D2E `README.md` and `evaluate.py` confirm 50ms bins, keyboard/`mouse/raw` inputs, and official comparison of `ground_truth.mcap predicted.mcap`. Therefore the writer-produced MCAP official round-trip is accepted as a necessary final Phase 0 follow-up.

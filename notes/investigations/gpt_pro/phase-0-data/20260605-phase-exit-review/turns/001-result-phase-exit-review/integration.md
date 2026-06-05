@@ -16,3 +16,13 @@ Implication:
 - Do not mark Phase 0 complete yet.
 - Add/execute a minimal follow-up story before ROADMAP/DECISIONS updates: implement or enable a writer-produced MCAP round-trip for one real recording and run pinned official `evaluate.py` on `ground_truth.mcap` vs generated prediction MCAP, with provenance proving the prediction file is not a copy.
 - If implementation proves too large, record the exact blocker and re-review; otherwise treat the check as the final Phase 0 evidence gap.
+
+## Primary-source verification
+
+Verified against the pinned official D2E repo artifact copied from commit `80e98e26e4dc584ec76fec5789b4a97c275dd032`:
+
+- `README.md` states the D2E-480p release has synchronized video/audio/input events from 29 PC games and documents keyboard plus `mouse/raw` access.
+- `README.md` and `evaluate.py` both define non-overlapping 50ms evaluation bins.
+- `evaluate.py` accepts `ground_truth.mcap predicted.mcap`, aligns timestamps using the first `screen` event, then normalizes and evaluates topics `screen`, `keyboard`, and `mouse/raw`.
+
+This supports GPT-Pro's claim that same-MCAP official evaluation validates the official path but does not independently validate this repo's prediction-writer output.
