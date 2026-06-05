@@ -44,6 +44,7 @@
       }
     },
     "totals": {"type": "object", "additionalProperties": true},
+    "source_mcap_json_summary": {"type": "object", "additionalProperties": true},
     "created_by_story": {
       "enum": [
         "G001-bootstrap-package-configs-and-schema",
