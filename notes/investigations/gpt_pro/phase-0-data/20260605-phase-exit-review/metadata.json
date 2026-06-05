@@ -1,0 +1,25 @@
+{
+  "anchor_status": "active",
+  "chatgpt_url": "https://chatgpt.com/c/6a22ef07-d1f8-83a9-83d4-8268febde7d8",
+  "conversation_id": "6a22ef07-d1f8-83a9-83d4-8268febde7d8",
+  "date_created": "2026-06-05",
+  "date_updated": "2026-06-05",
+  "model_mode": "Extended Pro",
+  "phase": "phase-0-data",
+  "related_docs": [
+    "docs/reproduction_spec/ROADMAP.md",
+    "docs/reproduction_spec/CANONICAL_SPEC.md",
+    "notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md",
+    "notes/plans/phase-0-data/20260605-data-foundation-plan.md"
+  ],
+  "topic": "phase exit review",
+  "turns": [
+    {
+      "path": "turns/001-result-phase-exit-review",
+      "query_type": "result-phase-exit-review",
+      "stance": "initial",
+      "status": "integrated",
+      "turn": 1
+    }
+  ]
+}
