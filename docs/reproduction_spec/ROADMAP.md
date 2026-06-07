@@ -40,7 +40,7 @@ Goal: build the deterministic D2E/action/evaluation foundation used by every lat
 - [x] Keyboard/mouse overlay visualizations look plausible (`notes/runs/20260605-phase0-overlay-sanity.md`; six Apex overlay PNGs inspected).
 - [x] Raw HID deltas reconstruct plausible movement (`notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`; exact writer mouse Pearson X/Y `1.0/0.9999999999999998`, scale X/Y `1.0/1.0`).
 - [x] No-op/event distributions are logged by game and split (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; action distribution artifact `phase0-action-distribution-1b2de09a5ae4dc24`).
-- [x] Event overflow is below threshold or explained (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md` overflow `0.0`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md` tokenized overflow bins `0`).
+- [x] Event overflow is below threshold or explained (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md` overflow `0.0`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md` tokenized overflow bins `0`; full labeled D2E follow-up `notes/runs/20260607-post-phase0-temporal-overflow-mlxp.md` found `27 / 19,057,088` K=8 overflow bins, `1.4167956825303006e-06`).
 - [x] GT action round-trip passes evaluator and writer checks (`notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`; `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`).
 
 ### References and floor checks

@@ -22,7 +22,7 @@ Canonical source: `./CANONICAL_SPEC.md`. Record final decisions here as they are
 - Scroll representation: directional sparse event tokens (`SCROLL_UP`, `SCROLL_DOWN`, `SCROLL_LEFT`, `SCROLL_RIGHT`) from raw scroll deltas; pinned official D2E `evaluate.py` does not score scroll, so G015 tokenized writer skips scroll and records skipped count.
 - Click-position auxiliary grid/horizon: deferred; no Phase 0 auxiliary click-position target.
 - Key/button state auxiliary targets: deferred; Phase 0 tokenizer represents press/release events only, while state topics are ignored for training input.
-- Overflow threshold/action: keep the spec threshold of `0.1%` overflow bins before increasing `K`; tokenizer preserves mouse buttons, then key-down, then key-up, emits `EVENT_OVERFLOW` for excess events, and logs overflow. Phase 0 real-D2E one-per-game action distribution observed overflow `0.0`; G015 tokenized writer observed `0` overflow bins on Apex.
+- Overflow threshold/action: keep the spec threshold of `0.1%` overflow bins before increasing `K`; tokenizer preserves mouse buttons, then key-down, then key-up, emits `EVENT_OVERFLOW` for excess events, and logs overflow. Phase 0 real-D2E one-per-game action distribution observed overflow `0.0`; G015 tokenized writer observed `0` overflow bins on Apex. Post-Phase 0 full labeled-D2E follow-up (`notes/runs/20260607-post-phase0-temporal-overflow-mlxp.md`) observed `27 / 19,057,088` K=8 overflow bins (`1.4167956825303006e-06`), below threshold, with rare overflows dominated by scroll bursts and repeated held-key down events.
 
 ## Video encoder decisions
 
@@ -90,7 +90,7 @@ Canonical source: `./CANONICAL_SPEC.md`. Record final decisions here as they are
 ## Operational decisions
 
 - Docker image tag/digest: Phase 0 final data/evaluator smoke image `docker.io/pjh6029/fdm-1-with-d2e:phase0-20260605-ee08fb8@sha256:4b6d2e78f8f6393ca0e8b23af21de50fc852c292cdd2c934cb2a05f31d6555cb`; earlier G009 image is recorded in `notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`.
-- MLXP reservation/run record location: Phase 0 production reservations and cancellation evidence are recorded under `notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`, `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`, `notes/runs/20260605-phase0-overlay-sanity.md`, and matching ignored `outputs/phase0/mlxp/...` API artifacts.
+- MLXP reservation/run record location: Phase 0 production reservations and cancellation evidence are recorded under `notes/runs/20260605-phase0-real-d2e-mlxp-smoke.md`, `notes/runs/20260605-phase0-g015-writer-produced-mcap-roundtrip.md`, `notes/runs/20260605-phase0-overlay-sanity.md`, and matching ignored `outputs/phase0/mlxp/...` API artifacts. Post-Phase 0 temporal/overflow follow-up reservation `rsv-jeonghunpark-20260607-1ef171` and cancellation evidence are recorded in `notes/runs/20260607-post-phase0-temporal-overflow-mlxp.md` plus `outputs/phase0/mlxp/20260607-temporal-overflow/`.
 - Artifact/checkpoint storage path: Phase 0 generated artifacts live under ignored repo-local `outputs/phase0/...`; no checkpoints were produced in Phase 0.
 - Feature cache storage path: deferred until Phase 1/0.5 feature-cache implementation; no Phase 0 feature cache.
 - WandB/logging policy: W&B was not used for deterministic Phase 0 data/evaluator smokes; future non-trivial training/evaluation runs should use entity `pjh6029-seoul-national-university` and project `fdm-1-with-d2e`.
