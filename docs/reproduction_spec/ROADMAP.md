@@ -108,7 +108,9 @@ Goal: determine whether frozen pretrained video features are enough and, if not,
 - [ ] VE-0 frozen encoder bakeoff feature extraction works for practical candidates.
 - [ ] VE-1 frozen encoder + temporal resampler reference works.
 - [ ] Feature-cache format records source checkpoint, frame policy, token count, manifest, and git SHA.
+- [ ] Unlabeled/video-only D2E manifest records game, duration, checksum/size, split/scale subset IDs, and read-only source paths before VE adaptation uses it.
 - [ ] D2E gameplay adaptation path is implemented for VE-2 or VE-3.
+- [ ] VE-3 self-supervised adaptation consumes the selected unlabeled/video-only manifest along with that from labeled ones unless a labeled-only ablation is explicitly documented.
 - [ ] Optional screen/game auxiliary adaptation path is available if diagnostics justify it.
 - [ ] Throughput, memory, latency, and cache-size logging is wired into runs.
 
@@ -183,6 +185,7 @@ Goal: create validated pseudo-label datasets for FDM training without modifying 
 ### Implementation
 
 - [ ] `D_GT` is materialized from labeled data outside the source dataset tree.
+- [ ] Source unlabeled/video-only manifest ID is selected and recorded before pseudo-label generation.
 - [ ] `D_PSEUDO_ALL` is generated from the promoted IDM.
 - [ ] `D_PSEUDO_FILTERED` is generated from calibrated/confidence-filtered IDM predictions.
 - [ ] `D_PSEUDO_GENERALIST_IDM` is generated only if D2E-Generalist-IDM-1B inference/output compatibility is practical.
@@ -206,6 +209,7 @@ Goal: create validated pseudo-label datasets for FDM training without modifying 
 
 ### Artifacts / decisions
 
+- [ ] Source unlabeled/video-only manifest ID:
 - [ ] Pseudo-label dataset manifest IDs:
 - [ ] Filtering threshold/coverage decision:
 - [ ] Mixture-ratio candidate list:
