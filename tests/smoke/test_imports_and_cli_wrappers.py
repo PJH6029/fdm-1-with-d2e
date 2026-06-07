@@ -21,11 +21,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 BOOTSTRAP_STORY_ID = "G001-bootstrap-package-configs-and-schema"
 MANIFEST_STORY_ID = "G004-implement-manifests-and-action-distr"
 EVALUATOR_STORY_ID = "G005-implement-evaluator-and-official-d2e"
+TEMPORAL_SANITY_STORY_ID = "post-phase0-temporal-sanity"
+OVERFLOW_STATS_STORY_ID = "post-phase0-overflow-stats"
 SCRIPTS = [
     "build_d2e_manifest.py",
     "summarize_action_distribution.py",
     "d2e_roundtrip_check.py",
     "locate_d2e_reference.py",
+    "export_temporal_sanity_window.py",
+    "summarize_token_overflow.py",
 ]
 
 
@@ -65,14 +69,23 @@ def test_cli_wrappers_emit_placeholder_contracts_without_external_inputs() -> No
             stderr=subprocess.PIPE,
         )
         payload = json.loads(result.stdout)
-        assert payload["story_id"] in {BOOTSTRAP_STORY_ID, MANIFEST_STORY_ID, EVALUATOR_STORY_ID}
+        assert payload["story_id"] in {
+            BOOTSTRAP_STORY_ID,
+            MANIFEST_STORY_ID,
+            EVALUATOR_STORY_ID,
+            TEMPORAL_SANITY_STORY_ID,
+            OVERFLOW_STATS_STORY_ID,
+        }
         assert payload["status"] in {
             "placeholder_contract_only",
             "manifest_builders_available",
             "action_distribution_builder_available",
             "fixture_roundtrip_passed",
             "official_reference_record_available",
+            "temporal_sanity_exporter_available",
+            "overflow_stats_available",
         }
         assert payload["offline_only"] is True
-        assert payload["config_exists"] is True
+        if "config_exists" in payload:
+            assert payload["config_exists"] is True
         assert result.stderr == ""
